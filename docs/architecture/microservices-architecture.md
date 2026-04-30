@@ -206,7 +206,6 @@ flowchart TB
     F1 --> ThirdParty
 ```
 
-
 ## Event Bus Fan-Out Detail
 
 The primary diagram above collapses the entire SNS-topic / SQS-queue routing mesh into a single `SNS -> SQS` edge for visual clarity. The diagram below zooms in on that mesh, rendering every per-event SNS topic, every per-consumer SQS queue, and every fan-out edge between them. This is the canonical visualization of the platform's asynchronous integration topology — the mesh that decouples publishers from subscribers and that delivers the universal-subscriber pattern of Section 6.3.3.1.2.
@@ -328,7 +327,7 @@ flowchart TB
     %% tenacity (exponential backoff, bounded attempts) and, for cross-service calls, circuitbreaker.
     %% =========================================================================
     subgraph SyncEdges["Synchronous Edges (HTTPS via httpx)"]
-        E1["Client &rarr; F-011<br/><br/>HTTPS / JSON<br/>tenacity 8.2.x retry<br/>(exponential backoff,<br/>bounded attempts)"]
+        E1["Client &rarr; F-011<br/><br/>HTTPS / JSON (httpx 0.27.x)<br/>tenacity 8.2.x retry<br/>(exponential backoff,<br/>bounded attempts)"]
         E2["F-011 &rarr; service<br/><br/>HTTPS / JSON<br/>circuitbreaker 2.0.x<br/>(closed &rarr; open &rarr; half-open)<br/>+ tenacity retry"]
         E3["service &rarr; F-010<br/><br/>HTTPS / JSON<br/>tenacity retry<br/>+ Redis cache hit-path"]
         E4["F-001 &rarr; F-005<br/><br/>HTTPS / JSON<br/>circuitbreaker + tenacity<br/>(profile context fetch)"]
@@ -386,4 +385,3 @@ The two complementary diagrams refine specific concerns without overcrowding the
 - [`sequence-diagrams/login-flow.md`](sequence-diagrams/login-flow.md) — Mermaid sequence diagram for the user Login flow, including the `alt` / `else` branch for credential validity and the asynchronous fan-out to `F-007` Audit.
 - [`sequence-diagrams/payment-flow.md`](sequence-diagrams/payment-flow.md) — Mermaid sequence diagram for the Payment processing flow, including nested `alt` / `else` branches for RBAC permit/deny and authorization succeed/fail, plus a `par` / `and` block for the parallel post-settlement fan-out to `F-003` Notifications, `F-007` Audit, and `F-004` Analytics.
 - [Repository root `README.md`](../../README.md) — Top-level project landing page with cross-links back into this architecture documentation.
-
