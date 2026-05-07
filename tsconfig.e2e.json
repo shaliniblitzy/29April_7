@@ -2,51 +2,57 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
+    "lib": ["ES2020", "DOM"],
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "declaration": false,
     "sourceMap": true,
-    "outDir": "./dist-e2e",
+    "outDir": "./e2e/.tsc-output",
     "rootDir": "./",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "baseUrl": "./",
     "types": ["@playwright/test", "node"],
-    "baseUrl": ".",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": false,
+    "useUnknownInCatchVariables": true,
     "paths": {
       "@e2e/*": ["e2e/*"],
       "@pages/*": ["e2e/pages/*"],
-      "@fixtures": ["e2e/fixtures/index"],
       "@fixtures/*": ["e2e/fixtures/*"],
-      "@factories": ["e2e/factories/index"],
       "@factories/*": ["e2e/factories/*"],
       "@mocks/*": ["e2e/mocks/*"],
-      "@patterns": ["e2e/patterns/index"],
       "@patterns/*": ["e2e/patterns/*"],
-      "@utils": ["e2e/utils/index"],
-      "@utils/*": ["e2e/utils/*"],
-      "@reporters/*": ["e2e/reporters/*"]
+      "@utils/*": ["e2e/utils/*"]
     }
   },
   "include": [
+    "playwright.config.ts",
     "e2e/**/*.ts",
-    "playwright.config.ts"
+    "e2e/**/*.json"
   ],
   "exclude": [
     "node_modules",
-    "dist-e2e",
+    "dist",
     "playwright-report",
     "test-results",
-    "e2e/storage-states"
-  ]
+    "e2e/.tsc-output",
+    "e2e/.cache",
+    "e2e/storage-states",
+    "e2e/fixtures/api-responses/**/*.json"
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

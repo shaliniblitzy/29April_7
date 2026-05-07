@@ -25,7 +25,8 @@ e2e/.cache/
 e2e/storage-states/*.json
 !e2e/storage-states/.gitkeep
 
-# TypeScript compile output for E2E
+# TypeScript compile output for E2E (per tsconfig.e2e.json outDir)
+e2e/.tsc-output/
 dist-e2e/
 
 # ------------------------------------------------------------------
