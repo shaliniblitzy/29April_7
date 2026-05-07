@@ -87,10 +87,4 @@ export type {
 // ---------------------------------------------------------------------------
 
 export { competencyFactory, competencyLevelFactory } from './competency.factory';
-export type {
-  Competency,
-  CompetencyCategory,
-  CompetencyStatus,
-  CompetencyLevel,
-  ProficiencyLevel,
-} from './competency.factory';
+export type { Competency, CompetencyCategory, CompetencyLevel } from './competency.factory';
