@@ -1,0 +1,21 @@
+{
+  "error": "forbidden",
+  "message": "You do not have permission to perform this action. Please contact your administrator if you believe this is an error.",
+  "code": "AUTHZ-403-001",
+  "timestamp": "2026-05-01T12:00:00.000Z",
+  "path": "/api/workforce/teams",
+  "traceId": "00000000-0000-4000-8000-000000000403",
+  "requiredPermission": "workforce.write",
+  "details": {
+    "userId": "e2e-restricted-user",
+    "userRoles": [
+      "viewer"
+    ],
+    "requiredRoles": [
+      "manager",
+      "admin"
+    ],
+    "resource": "team",
+    "action": "create"
+  }
+}
