@@ -1,0 +1,15 @@
+{
+  "error": "invalid_credentials",
+  "message": "The username or password you entered is incorrect. Please try again or contact your administrator if you have forgotten your credentials.",
+  "code": "AUTH-401-001",
+  "timestamp": "2026-05-01T12:00:00.000Z",
+  "path": "/api/auth/login",
+  "traceId": "00000000-0000-4000-8000-000000000401",
+  "details": {
+    "reason": "invalid_credentials",
+    "attemptCount": 1,
+    "maxAttempts": 5,
+    "lockoutAfterAttempts": 5,
+    "supportContactUrl": "/help/contact-support"
+  }
+}
