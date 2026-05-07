@@ -1,10 +1,30 @@
 {
   "name": "whoville-client-e2e",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Playwright end-to-end test suite for the Whoville-Client Angular 11.2.5 application. Greenfield E2E initiative providing a regression safety net for the planned Angular 11 -> 21 migration. Implements the 3-tier (Smoke / Feature CRUD / Integration) execution model and the Patterns A-E config-driven test templates documented in the Agent Action Plan.",
+  "description": "Playwright end-to-end test suite for the Whoville-Client Angular 11.2.5 application. Greenfield E2E initiative providing a regression safety net for the planned Angular 11 -> 21 framework migration. Implements the 3-tier (Smoke / Feature CRUD / Integration) execution model and the Patterns A-E config-driven test templates documented in the Agent Action Plan (AAP sections 0.4.1, 0.5, 0.6, 0.9, 0.10).",
+  "license": "UNLICENSED",
+  "author": "Nationwide Whoville-Client Team",
+  "homepage": "https://github.com/<ORG>/29April_7#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<ORG>/29April_7.git"
+  },
+  "bugs": {
+    "url": "https://github.com/<ORG>/29April_7/issues"
+  },
+  "keywords": [
+    "playwright",
+    "e2e",
+    "end-to-end",
+    "angular",
+    "whoville",
+    "testing",
+    "regression",
+    "migration"
+  ],
   "engines": {
-    "node": ">=20.20.2",
+    "node": ">=20.0.0 <21.0.0",
     "npm": ">=10.0.0"
   },
   "scripts": {
@@ -13,43 +33,77 @@
     "e2e:crud": "playwright test --project=feature-crud",
     "e2e:integration": "playwright test --project=integration",
     "e2e:headed": "playwright test --headed",
-    "e2e:debug": "PWDEBUG=1 playwright test",
+    "e2e:debug": "cross-env PWDEBUG=1 playwright test",
     "e2e:ui": "playwright test --ui",
-    "e2e:codegen": "playwright codegen",
+    "e2e:codegen": "cross-env-shell \"playwright codegen ${E2E_BASE_URL:-http://localhost:4200}\"",
     "e2e:report": "playwright show-report",
     "e2e:install-browsers": "playwright install --with-deps",
     "e2e:install-browsers-chromium": "playwright install --with-deps chromium",
-    "e2e:cleanup-storage-states": "node -e \"const fs=require('fs');const p='e2e/storage-states';if(fs.existsSync(p)){fs.readdirSync(p).filter(f=>f.endsWith('.json')).forEach(f=>fs.unlinkSync(`${p}/${f}`));console.log('Cleaned storage states.');}else{console.log('No storage-states directory.');}\"",
-    "e2e:coverage-report": "ts-node e2e/scripts/coverage-report.ts",
-    "e2e:validate-routes": "ts-node e2e/scripts/coverage-report.ts --validate",
-    "e2e:flake-report": "ts-node e2e/scripts/flake-detector.ts",
+    "e2e:cleanup-storage-states": "node -e \"const fs=require('fs');const p='e2e/storage-states';if(fs.existsSync(p)){fs.readdirSync(p).filter(f=>f.endsWith('.json')).forEach(f=>fs.unlinkSync(p+'/'+f));console.log('Cleaned *.json from '+p);}else{fs.mkdirSync(p,{recursive:true});console.log('Created '+p);}\"",
+    "e2e:coverage-report": "ts-node --project tsconfig.e2e.json e2e/scripts/coverage-report.ts",
+    "e2e:validate-routes": "ts-node --project tsconfig.e2e.json e2e/scripts/coverage-report.ts --validate",
+    "e2e:flake-report": "ts-node --project tsconfig.e2e.json e2e/scripts/flake-detector.ts",
+    "e2e:merge-tier-reports": "ts-node --project tsconfig.e2e.json e2e/scripts/merge-tier-reports.ts",
+    "e2e:generate-storage-states": "ts-node --project tsconfig.e2e.json e2e/scripts/generate-storage-states.ts",
     "e2e:typecheck": "tsc --noEmit -p tsconfig.e2e.json",
-    "e2e:lint": "eslint \"e2e/**/*.ts\""
+    "lint:e2e": "eslint --ext .ts e2e/",
+    "format:e2e": "prettier --write \"e2e/**/*.ts\"",
+    "format:e2e:check": "prettier --check \"e2e/**/*.ts\"",
+    "start:e2e": "node -e \"console.error('WARNING: This is a placeholder. Override start:e2e in the Whoville-Client integration to invoke the Angular dev server (e.g., \\\"ng serve --configuration=e2e --port=4200\\\") so it binds to E2E_BASE_URL. See AAP section 0.9.1.'); process.exit(1);\""
+  },
+  "config": {
+    "playwright_config": "playwright.config.ts",
+    "tsconfig": "tsconfig.e2e.json",
+    "env_template": ".env.e2e.example",
+    "e2e_readme": "e2e/README.md",
+    "route_inventory": "e2e/utils/route-inventory.ts",
+    "global_setup": "e2e/global-setup.ts",
+    "global_teardown": "e2e/global-teardown.ts"
   },
   "devDependencies": {
-    "@playwright/test": "1.59.1",
-    "playwright": "1.59.1",
+    "@axe-core/playwright": "^4.10.0",
+    "@faker-js/faker": "^9.0.0",
     "@playwright/browser-chromium": "1.59.1",
     "@playwright/browser-firefox": "1.59.1",
     "@playwright/browser-webkit": "1.59.1",
-    "@faker-js/faker": "^9.0.0",
-    "@axe-core/playwright": "^4.10.0",
-    "wait-on": "^7.0.0",
+    "@playwright/test": "1.59.1",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.0",
     "dotenv-cli": "^7.4.0",
-    "typescript": "~5.4.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-playwright": "^1.6.0",
+    "playwright": "1.59.1",
+    "prettier": "^3.2.0",
     "ts-node": "^10.9.2",
-    "@types/node": "^20.0.0"
+    "typescript": "~5.4.0",
+    "wait-on": "^7.0.0"
   },
   "blitzy": {
+    "aapReferences": {
+      "metadata": "AAP section 0.5.1.1 (Top-Level Configuration and Manifests)",
+      "scripts": "AAP sections 0.5.2 and 0.9.1",
+      "dependencies": "AAP section 0.6.1 (Testing Dependencies)",
+      "lockStepVersioning": "AAP section 0.10.2 (Critical Implementation Reminders)"
+    },
     "doNotForget": [
-      "Keep all @playwright/* packages in lock-step (per Playwright docs).",
-      "Run 'npx playwright install --with-deps' after any Playwright version bump.",
-      "Regenerate e2e/storage-states/*.json (gitignored) via global-setup.ts before any tier run.",
-      "Refresh e2e/fixtures/api-responses/**/*.json quarterly via E2E_API_MODE=live nightly run.",
-      "Update e2e/utils/route-inventory.ts whenever new application routes are added.",
-      "playwright-ng-schematics is OPTIONAL and intentionally NOT pinned here; add it when the Angular CLI integration is wired in (its current 21.x major couples to Angular 21 schematic API and is not compatible with Angular 11 - revisit during the Angular 11 -> 21 migration)."
+      "Keep all @playwright/* packages in lock-step at the same exact version 1.59.1 (per Playwright docs and AAP section 0.10.2). Drift between @playwright/test, playwright, and @playwright/browser-* causes confusing browser-version mismatches.",
+      "Run 'npm run e2e:install-browsers' (or 'npx playwright install --with-deps') after any Playwright version bump to refresh Chromium / Firefox / WebKit binaries.",
+      "Override 'start:e2e' at Whoville-Client integration time to invoke the Angular dev server (e.g., 'ng serve --configuration=e2e --port=4200'). The placeholder script intentionally exits with status 1 to make this integration step visible.",
+      "Replace the <ORG> placeholder in 'homepage', 'repository.url', and 'bugs.url' with the actual GitHub organization at integration time.",
+      "Regenerate e2e/storage-states/*.json (gitignored) via 'npm run e2e:generate-storage-states' or via the global-setup.ts hook before any tier run; never commit storage states (they may contain valid auth tokens).",
+      "Refresh e2e/fixtures/api-responses/**/*.json quarterly via the E2E_API_MODE=live nightly run to detect API contract drift between the mocked responses and the real backend.",
+      "Update e2e/utils/route-inventory.ts whenever new application routes are added; the route-coverage report fails CI for any uncovered route (see 'npm run e2e:validate-routes').",
+      "playwright-ng-schematics is intentionally NOT included as a devDependency in the initial commit despite AAP section 0.6.1 listing it as 'latest'. Rationale: the package's current major version (21.x) targets Angular 21 schematic APIs and is not peer-compatible with Angular 11.2.5; introducing it now would either (a) break npm install on the Whoville-Client integration target or (b) coerce a downgrade we cannot pin safely. Add it during the Angular 11 -> 21 migration when the schematic API is aligned. The 'ng e2e' Angular CLI integration described in AAP section 0.10.1 may be deferred to post-migration without affecting any tier execution path because every npm script invokes 'playwright' / 'playwright test' directly.",
+      "When the Whoville-Client (Angular 11.2.5) repository merges this manifest, integrate the 'devDependencies' and 'scripts' blocks into the existing application package.json. The 'config' block is informational only (npm does not enforce it) but improves discoverability for new contributors."
+    ],
+    "deferredDependencies": [
+      "@ngx-playwright/test (latest) - Angular CDK harness integration; deferred per AAP section 0.6.1 to avoid coupling test framework version to the in-flight Angular major version.",
+      "allure-playwright (latest) - long-term flake trend analytics; deferred per AAP section 0.6.1 (the bundled HTML reporter + JUnit XML are sufficient for the initial commit).",
+      "playwright-bdd (latest) - Cucumber/Gherkin layer; deferred per AAP section 0.6.1 (Patterns A-E config-driven templates are the chosen abstraction).",
+      "playwright-ng-schematics (latest) - Angular CLI builder integration; deferred until the Angular 11 -> 21 migration aligns the schematic API peer requirement (see doNotForget item)."
     ]
   }
 }
