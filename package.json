@@ -1,0 +1,55 @@
+{
+  "name": "whoville-client-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright end-to-end test suite for the Whoville-Client Angular 11.2.5 application. Greenfield E2E initiative providing a regression safety net for the planned Angular 11 -> 21 migration. Implements the 3-tier (Smoke / Feature CRUD / Integration) execution model and the Patterns A-E config-driven test templates documented in the Agent Action Plan.",
+  "engines": {
+    "node": ">=20.20.2",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "e2e": "playwright test",
+    "e2e:smoke": "playwright test --project=smoke",
+    "e2e:crud": "playwright test --project=feature-crud",
+    "e2e:integration": "playwright test --project=integration",
+    "e2e:headed": "playwright test --headed",
+    "e2e:debug": "PWDEBUG=1 playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:codegen": "playwright codegen",
+    "e2e:report": "playwright show-report",
+    "e2e:install-browsers": "playwright install --with-deps",
+    "e2e:install-browsers-chromium": "playwright install --with-deps chromium",
+    "e2e:cleanup-storage-states": "node -e \"const fs=require('fs');const p='e2e/storage-states';if(fs.existsSync(p)){fs.readdirSync(p).filter(f=>f.endsWith('.json')).forEach(f=>fs.unlinkSync(`${p}/${f}`));console.log('Cleaned storage states.');}else{console.log('No storage-states directory.');}\"",
+    "e2e:coverage-report": "ts-node e2e/scripts/coverage-report.ts",
+    "e2e:validate-routes": "ts-node e2e/scripts/coverage-report.ts --validate",
+    "e2e:flake-report": "ts-node e2e/scripts/flake-detector.ts",
+    "e2e:typecheck": "tsc --noEmit -p tsconfig.e2e.json",
+    "e2e:lint": "eslint \"e2e/**/*.ts\""
+  },
+  "devDependencies": {
+    "@playwright/test": "1.59.1",
+    "playwright": "1.59.1",
+    "@playwright/browser-chromium": "1.59.1",
+    "@playwright/browser-firefox": "1.59.1",
+    "@playwright/browser-webkit": "1.59.1",
+    "@faker-js/faker": "^9.0.0",
+    "@axe-core/playwright": "^4.10.0",
+    "wait-on": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.0",
+    "dotenv-cli": "^7.4.0",
+    "typescript": "~5.4.0",
+    "ts-node": "^10.9.2",
+    "@types/node": "^20.0.0"
+  },
+  "blitzy": {
+    "doNotForget": [
+      "Keep all @playwright/* packages in lock-step (per Playwright docs).",
+      "Run 'npx playwright install --with-deps' after any Playwright version bump.",
+      "Regenerate e2e/storage-states/*.json (gitignored) via global-setup.ts before any tier run.",
+      "Refresh e2e/fixtures/api-responses/**/*.json quarterly via E2E_API_MODE=live nightly run.",
+      "Update e2e/utils/route-inventory.ts whenever new application routes are added.",
+      "playwright-ng-schematics is OPTIONAL and intentionally NOT pinned here; add it when the Angular CLI integration is wired in (its current 21.x major couples to Angular 21 schematic API and is not compatible with Angular 11 - revisit during the Angular 11 -> 21 migration)."
+    ]
+  }
+}
