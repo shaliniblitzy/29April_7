@@ -65,8 +65,8 @@ export type { Team, TeamStatus } from './team.factory';
 export { workforceAssignmentFactory } from './workforce-assignment.factory';
 export type {
   WorkforceAssignment,
-  AssignmentType,
-  AssignmentStatus,
+  WorkforceAssignmentType,
+  WorkforceAssignmentStatus,
 } from './workforce-assignment.factory';
 
 // ---------------------------------------------------------------------------
