@@ -76,7 +76,7 @@ export type {
 export { assessmentFactory, assessmentResponseFactory } from './assessment.factory';
 export type {
   Assessment,
-  AssessmentCategory,
+  AssessmentScore,
   AssessmentStatus,
   AssessmentResponse,
   AssessmentResponseStatus,
