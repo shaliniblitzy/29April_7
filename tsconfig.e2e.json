@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "sourceMap": true,
+    "outDir": "./dist-e2e",
+    "rootDir": "./",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["@playwright/test", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@e2e/*": ["e2e/*"],
+      "@pages/*": ["e2e/pages/*"],
+      "@fixtures": ["e2e/fixtures/index"],
+      "@fixtures/*": ["e2e/fixtures/*"],
+      "@factories": ["e2e/factories/index"],
+      "@factories/*": ["e2e/factories/*"],
+      "@mocks/*": ["e2e/mocks/*"],
+      "@patterns": ["e2e/patterns/index"],
+      "@patterns/*": ["e2e/patterns/*"],
+      "@utils": ["e2e/utils/index"],
+      "@utils/*": ["e2e/utils/*"],
+      "@reporters/*": ["e2e/reporters/*"]
+    }
+  },
+  "include": [
+    "e2e/**/*.ts",
+    "playwright.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist-e2e",
+    "playwright-report",
+    "test-results",
+    "e2e/storage-states"
+  ]
+}
