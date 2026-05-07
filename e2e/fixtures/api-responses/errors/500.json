@@ -1,0 +1,14 @@
+{
+  "error": "internal_server_error",
+  "message": "An unexpected error occurred while processing your request. Our team has been notified. Please try again in a few moments; if the problem persists, contact support.",
+  "code": "SRV-500-001",
+  "timestamp": "2026-05-01T12:00:00.000Z",
+  "path": "/api/workforce/teams",
+  "traceId": "00000000-0000-4000-8000-000000000500",
+  "details": {
+    "incidentId": "INC-2026-05-01-0001",
+    "retryable": true,
+    "retryAfterSeconds": 5,
+    "supportContactUrl": "/help/contact-support"
+  }
+}
