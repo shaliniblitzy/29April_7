@@ -60,7 +60,7 @@ export type { User, UserRole, UserStatus } from './user.factory';
 // ---------------------------------------------------------------------------
 
 export { teamFactory } from './team.factory';
-export type { Team, TeamStatus } from './team.factory';
+export type { Team } from './team.factory';
 
 export { workforceAssignmentFactory } from './workforce-assignment.factory';
 export type {
