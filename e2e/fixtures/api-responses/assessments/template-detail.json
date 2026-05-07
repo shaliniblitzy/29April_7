@@ -1,0 +1,272 @@
+{
+  "id": "tmpl-001",
+  "name": "Annual Performance Review",
+  "description": "Comprehensive yearly performance assessment template covering goal achievement, competency demonstration, and self-reflection. Used company-wide for the annual fiscal-year review cycle. Currently in version 3, refined from feedback collected during the FY2025 cycle.",
+  "version": "v3",
+  "previousVersionId": "tmpl-001-v2",
+  "status": "published",
+  "audience": "all",
+  "audienceDescription": "All full-time employees with at least 90 days of tenure at the time of cycle launch. Includes engineers, product managers, customer success, and operations roles. Excludes contractors and interns.",
+  "ownerId": "user-spatel",
+  "ownerName": "Sara Patel",
+  "tags": ["annual", "performance", "company-wide", "fy2026"],
+  "scoring": {
+    "scaleMin": 1,
+    "scaleMax": 5,
+    "scaleLabels": {
+      "1": "Did Not Meet Expectations",
+      "2": "Partially Met Expectations",
+      "3": "Met Expectations",
+      "4": "Exceeded Expectations",
+      "5": "Greatly Exceeded Expectations"
+    },
+    "aggregationMethod": "weighted-average",
+    "passingThreshold": 3.0
+  },
+  "sections": [
+    {
+      "id": "sec-001",
+      "name": "Goals",
+      "description": "Reviews progress against the goals committed at the beginning of the cycle. Each goal is rated on its own merit and aggregated into the section score.",
+      "order": 1,
+      "questionCount": 5,
+      "weight": 0.4,
+      "required": true,
+      "questions": [
+        {
+          "id": "q-001",
+          "prompt": "Describe progress against your top business goal for the cycle.",
+          "type": "textarea",
+          "required": true,
+          "helpText": "Aim for 200-400 words. Include specific outcomes and metrics where possible.",
+          "order": 1
+        },
+        {
+          "id": "q-002",
+          "prompt": "Rate your overall achievement against committed goals.",
+          "type": "rating",
+          "required": true,
+          "scaleMax": 5,
+          "order": 2
+        },
+        {
+          "id": "q-003",
+          "prompt": "Which goal did you exceed expectations on, and how?",
+          "type": "textarea",
+          "required": false,
+          "helpText": "Optional. Describe one specific goal where you exceeded expectations.",
+          "order": 3
+        },
+        {
+          "id": "q-004",
+          "prompt": "Which goal fell short, and what did you learn?",
+          "type": "textarea",
+          "required": false,
+          "helpText": "Optional. Frame as a learning rather than a failure.",
+          "order": 4
+        },
+        {
+          "id": "q-005",
+          "prompt": "How well did your goals align with team and organizational priorities?",
+          "type": "likert",
+          "required": true,
+          "scaleMax": 5,
+          "order": 5
+        }
+      ]
+    },
+    {
+      "id": "sec-002",
+      "name": "Competencies",
+      "description": "Assesses demonstration of the company's core competencies during the review cycle. Each competency is rated using the universal Whoville proficiency scale and accompanied by behavioral examples.",
+      "order": 2,
+      "questionCount": 8,
+      "weight": 0.4,
+      "required": true,
+      "questions": [
+        {
+          "id": "q-006",
+          "prompt": "Rate your demonstrated proficiency in TypeScript over the cycle.",
+          "type": "competency",
+          "required": true,
+          "competencyId": "skl-001",
+          "scaleMax": 5,
+          "order": 1
+        },
+        {
+          "id": "q-007",
+          "prompt": "Rate your demonstrated proficiency in System Design over the cycle.",
+          "type": "competency",
+          "required": true,
+          "competencyId": "skl-002",
+          "scaleMax": 5,
+          "order": 2
+        },
+        {
+          "id": "q-008",
+          "prompt": "Rate your demonstrated proficiency in Code Review over the cycle.",
+          "type": "competency",
+          "required": true,
+          "competencyId": "skl-003",
+          "scaleMax": 5,
+          "order": 3
+        },
+        {
+          "id": "q-009",
+          "prompt": "Rate your demonstrated proficiency in Stakeholder Management over the cycle.",
+          "type": "competency",
+          "required": true,
+          "competencyId": "skl-004",
+          "scaleMax": 5,
+          "order": 4
+        },
+        {
+          "id": "q-010",
+          "prompt": "Rate your demonstrated proficiency in Cross-Functional Collaboration over the cycle.",
+          "type": "competency",
+          "required": true,
+          "competencyId": "skl-007",
+          "scaleMax": 5,
+          "order": 5
+        },
+        {
+          "id": "q-011",
+          "prompt": "Rate your demonstrated proficiency in Mentoring over the cycle.",
+          "type": "competency",
+          "required": false,
+          "competencyId": "skl-009",
+          "scaleMax": 5,
+          "order": 6
+        },
+        {
+          "id": "q-012",
+          "prompt": "Provide one concrete example of competency demonstration from the cycle.",
+          "type": "textarea",
+          "required": true,
+          "helpText": "Choose a single moment that demonstrates one of the rated competencies above.",
+          "order": 7
+        },
+        {
+          "id": "q-013",
+          "prompt": "Which competency do you most want to develop next cycle?",
+          "type": "multi-select",
+          "required": true,
+          "options": [
+            "TypeScript",
+            "System Design",
+            "Code Review",
+            "Stakeholder Management",
+            "Cross-Functional Collaboration",
+            "Mentoring",
+            "Kubernetes",
+            "CI/CD Pipelines",
+            "Incident Response",
+            "Domain Architecture"
+          ],
+          "order": 8
+        }
+      ]
+    },
+    {
+      "id": "sec-003",
+      "name": "Self-Reflection",
+      "description": "Open-ended reflection on the cycle, capturing growth, challenges, and forward-looking commitments. Less structured than Goals or Competencies but equally important for development conversations.",
+      "order": 3,
+      "questionCount": 4,
+      "weight": 0.2,
+      "required": true,
+      "questions": [
+        {
+          "id": "q-014",
+          "prompt": "What was your most significant growth area during this cycle?",
+          "type": "textarea",
+          "required": true,
+          "helpText": "Aim for 150-300 words.",
+          "order": 1
+        },
+        {
+          "id": "q-015",
+          "prompt": "What was the most significant challenge you faced, and how did you respond?",
+          "type": "textarea",
+          "required": true,
+          "helpText": "Aim for 150-300 words.",
+          "order": 2
+        },
+        {
+          "id": "q-016",
+          "prompt": "What support do you need from your manager for next cycle?",
+          "type": "textarea",
+          "required": true,
+          "helpText": "Be specific. Examples: more frequent 1:1s, exposure to a particular project, learning budget.",
+          "order": 3
+        },
+        {
+          "id": "q-017",
+          "prompt": "Rate your overall job satisfaction this cycle.",
+          "type": "likert",
+          "required": true,
+          "scaleMax": 5,
+          "order": 4
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "estimatedMinutes": 45,
+    "language": "en-US",
+    "translations": ["en-US"],
+    "complianceTags": ["sox-applicable", "performance-record"],
+    "retentionYears": 7,
+    "exportFormats": ["pdf", "docx", "json"]
+  },
+  "history": [
+    {
+      "id": "evt-101",
+      "eventType": "created",
+      "version": "v1",
+      "eventAt": "2025-01-10T10:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Template created for FY2024 annual review cycle."
+    },
+    {
+      "id": "evt-102",
+      "eventType": "version-published",
+      "version": "v2",
+      "eventAt": "2025-09-15T10:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Version 2 published with refined competencies section based on FY2024 feedback."
+    },
+    {
+      "id": "evt-103",
+      "eventType": "version-published",
+      "version": "v3",
+      "eventAt": "2026-01-15T10:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Version 3 published with new self-reflection section and updated competency mapping."
+    },
+    {
+      "id": "evt-104",
+      "eventType": "edited",
+      "version": "v3",
+      "eventAt": "2026-04-15T10:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Help text refined on three goal questions for clarity."
+    }
+  ],
+  "usageStats": {
+    "totalCyclesUsing": 3,
+    "activeCyclesUsing": 1,
+    "totalResponsesAllTime": 624,
+    "lastUsedAt": "2026-04-25T10:00:00Z",
+    "lastUsedInCycleId": "cyc-001"
+  },
+  "createdAt": "2026-01-10T10:00:00Z",
+  "updatedAt": "2026-04-15T10:00:00Z",
+  "publishedAt": "2026-01-15T10:00:00Z",
+  "questionCount": 17,
+  "estimatedMinutes": 45
+}
