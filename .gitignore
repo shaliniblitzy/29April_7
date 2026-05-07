@@ -1,0 +1,67 @@
+# ------------------------------------------------------------------
+# Node / npm
+# ------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnp.*
+
+# ------------------------------------------------------------------
+# Playwright artifacts (per AAP section 0.5.1.1)
+# ------------------------------------------------------------------
+playwright-report/
+test-results/
+playwright/.cache/
+e2e/.cache/
+
+# Trace artifacts (zip per failing test attempt)
+*.zip
+
+# Auth storage states are generated per-run by global-setup.ts and
+# must never be committed (may contain valid auth tokens).
+e2e/storage-states/*.json
+!e2e/storage-states/.gitkeep
+
+# TypeScript compile output for E2E
+dist-e2e/
+
+# ------------------------------------------------------------------
+# Environment files (real secrets, never commit)
+# ------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+.env.e2e
+
+# Allow the example template (safe to commit)
+!.env.e2e.example
+
+# ------------------------------------------------------------------
+# Editor / OS noise
+# ------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------------
+logs/
+*.log
+
+# ------------------------------------------------------------------
+# Coverage and analysis output
+# ------------------------------------------------------------------
+coverage/
+.nyc_output/
+e2e-coverage.html
+flake-report.json
