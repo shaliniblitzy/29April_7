@@ -1,0 +1,705 @@
+# =============================================================================
+# Whoville-Client E2E Pipeline (Azure DevOps)
+# =============================================================================
+#
+# This pipeline is the Azure DevOps mirror of the GitHub Actions workflows in
+# .github/workflows/e2e-tier-{1,2,3}-*.yml and provides identical CI semantics
+# for teams operating in Azure DevOps environments.
+#
+# It implements the 3-tier execution model from the Agent Action Plan (AAP):
+#
+#   Tier 1 - Smoke         ~40 tests,  ~3 min   (PR-blocking on every commit)
+#   Tier 2 - Feature CRUD  ~640 tests, ~15 min  (PR pre-merge gate, 4-way shard)
+#   Tier 3 - Integration   ~130 tests, ~25 min  (nightly + pre-release tags)
+#   Tier 3 - Live API      ~130 tests, ~25 min  (nightly only, real backend)
+#
+# All four stages share the same npm script entry points authored in
+# package.json so developers and CI runners use identical commands locally and
+# remotely (AAP section 0.9.1):
+#
+#   npm run e2e:smoke         -> playwright test --project=smoke
+#   npm run e2e:crud          -> playwright test --project=feature-crud
+#   npm run e2e:integration   -> playwright test --project=integration
+#   npm run e2e:install-browsers           -> playwright install --with-deps
+#   npm run e2e:install-browsers-chromium  -> playwright install --with-deps chromium
+#
+# -----------------------------------------------------------------------------
+# Required Azure DevOps Variable Groups (declare in the project's Library;
+# DO NOT inline secret values here):
+# -----------------------------------------------------------------------------
+#   whoville-e2e-secrets:
+#     - E2E_TEST_USER_USERNAME       (string, used by global-setup.ts to
+#                                     generate per-role storage states)
+#     - E2E_TEST_USER_PASSWORD       (secret string)
+#
+#   whoville-staging-config (consumed by Tier3_Integration_LiveApi only):
+#     - E2E_BASE_URL_STAGING         (string, e.g.,
+#                                     https://staging.whoville.example.internal)
+#
+# -----------------------------------------------------------------------------
+# References
+# -----------------------------------------------------------------------------
+#   AAP section 0.5.1.14  CI/CD workflow files (this file is mandated)
+#   AAP section 0.4.1     3-tier execution budgets and retry policy
+#   AAP section 0.7.1     Coverage and runtime targets per tier
+#   AAP section 0.9.1     CI workflow execution model + commands
+#   AAP section 0.10.1    User-specified testing directives
+#
+# -----------------------------------------------------------------------------
+# Implementation notes
+# -----------------------------------------------------------------------------
+# 1. The npm script `start:e2e` is intentionally a placeholder in this
+#    documentation-locus repository (see package.json `blitzy.doNotForget`).
+#    When this pipeline file is moved into the Whoville-Client Angular 11.2.5
+#    repository, the integrator overrides `start:e2e` to invoke the real
+#    Angular dev server (e.g., `ng serve --configuration=e2e --port=4200`).
+#
+# 2. The Whoville-Client app is NOT committed to this repository per AAP
+#    section 0.8.2; this pipeline is therefore a forward-looking specification
+#    that ships to the Whoville-Client codebase along with the rest of the
+#    `e2e/` directory. Azure DevOps validates YAML syntax at queue time even
+#    when the underlying npm scripts are placeholders.
+#
+# 3. Sharding: Tier 2 uses Azure DevOps `parallel: 4` strategy; the actual
+#    shard arguments are passed to Playwright via `--shard=$(System.JobPositionInPhase)/$(System.TotalJobsInPhase)`.
+#    `System.JobPositionInPhase` is 1-indexed (matches Playwright's --shard
+#    expectation of `1/N..N/N`).
+#
+# 4. Browser footprint optimization (AAP section 0.6.1):
+#       Tier 1 Smoke      -> Chromium only (~280 MB)
+#       Tier 2 CRUD       -> Chromium only (~280 MB)
+#       Tier 3 Integration -> Chromium + Firefox + WebKit (~630 MB total)
+#    Browser binaries are installed per-job (not cached across runs) because
+#    Playwright versions Chromium revisions internally and a stale cache
+#    causes hard-to-debug version-mismatch failures.
+#
+# 5. Failure tolerance per AAP section 0.4.1:
+#       Tier 1 Smoke      -> 0 retries (PR-blocking, zero tolerance)
+#       Tier 2 CRUD       -> 1 retry  (flake retry x 1)
+#       Tier 3 Integration -> 2 retries (flake retry x 2)
+#    Retries are configured in `playwright.config.ts` (`retries: isCI ? N : 0`)
+#    so they apply consistently in local debug and CI without per-tier
+#    command-line overrides.
+#
+# 6. Documentation-only changes (docs/**, *.md, README.md) are excluded from
+#    branch and PR triggers to avoid burning pipeline minutes on changes that
+#    cannot affect E2E behavior.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Pipeline name (appears in Azure DevOps build history)
+# -----------------------------------------------------------------------------
+# Format: 'Whoville-Client E2E - YYYYMMDD.R' (R = revision within the day).
+# Example: 'Whoville-Client E2E - 20260507.3'.
+name: 'Whoville-Client E2E - $(Date:yyyyMMdd).$(Rev:r)'
+
+# -----------------------------------------------------------------------------
+# Branch / commit-push trigger (CI on push, batched to coalesce rapid commits)
+# -----------------------------------------------------------------------------
+# Runs on: pushes to main, develop, release/* branches and release/* tags.
+# Excludes: documentation-only edits (docs/**, *.md, etc.).
+# -----------------------------------------------------------------------------
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - develop
+      - 'release/*'
+  tags:
+    include:
+      - 'release/*'
+  paths:
+    exclude:
+      - 'docs/**'
+      - '*.md'
+      - 'README.md'
+      - '.gitignore'
+      - 'LICENSE'
+
+# -----------------------------------------------------------------------------
+# PR trigger (Azure Repos Git only - GitHub PRs are gated via branch policy)
+# -----------------------------------------------------------------------------
+# Runs Tier 1 + Tier 2 on every PR targeting main / develop. The PR trigger
+# is skipped for documentation-only PRs to avoid wasting build minutes.
+# -----------------------------------------------------------------------------
+pr:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    exclude:
+      - 'docs/**'
+      - '*.md'
+      - 'README.md'
+
+# -----------------------------------------------------------------------------
+# Scheduled trigger (nightly Tier 3 + cross-browser + live-API matrix)
+# -----------------------------------------------------------------------------
+# Cron syntax (Azure DevOps): minute hour day-of-month month day-of-week (UTC).
+# 02:00 UTC = ~21:00 EST / ~22:00 EDT - runs while the team is offline.
+# `always: true` forces the run even when no commits have landed since the
+# last successful nightly (catches infrastructure-only regressions).
+# -----------------------------------------------------------------------------
+schedules:
+  - cron: '0 2 * * *'
+    displayName: 'Nightly E2E (Tier 3 + cross-browser + live API)'
+    branches:
+      include:
+        - main
+    always: true
+
+# -----------------------------------------------------------------------------
+# Pipeline-level variables (available to every stage / job / step unless
+# overridden at a more specific scope)
+# -----------------------------------------------------------------------------
+variables:
+  # Node.js LTS version for the test process. Pinned to 20.x per AAP section
+  # 0.2.1; required by @playwright/test 1.59.1 (Node >= 18). The Whoville-Client
+  # Angular 11 build uses a separate Node version managed via .nvmrc in the
+  # application repository - the two Node versions coexist via process boundary
+  # (Playwright drives the running app over HTTP).
+  - name: nodeVersion
+    value: '20.x'
+
+  # Playwright test framework version (kept in lock-step with package.json
+  # devDependencies per AAP section 0.10.2). When upgrading, update this
+  # variable AND every @playwright/* package version in package.json together.
+  - name: playwrightVersion
+    value: '1.59.1'
+
+  # Default base URL for the running Angular dev server. The Tier3 Live-API
+  # stage overrides this with the staging endpoint from a variable group.
+  - name: E2E_BASE_URL
+    value: 'http://localhost:4200'
+
+  # Default API mode (mock). The mock-api fixture registers page.route()
+  # interceptors backed by e2e/fixtures/api-responses/**/*.json. Set to
+  # 'live' only on the Tier3 Live-API stage to bypass interceptors and hit
+  # the real backend.
+  - name: E2E_API_MODE
+    value: 'mock'
+
+  # Companion flag consumed by global-setup.ts and the mock-api fixture.
+  # Kept in sync with E2E_API_MODE for clarity (the fixture treats either
+  # variable as authoritative).
+  - name: MOCK_API
+    value: 'true'
+
+  # Standard CI marker - flips Playwright into headless mode, enables
+  # forbidOnly, and shrinks worker count to 50% (see playwright.config.ts).
+  - name: CI
+    value: 'true'
+
+  # Cache target for npm / Cache@2 task. Pipeline.Workspace is the per-run
+  # workspace directory; npm is configured to use this path so the Cache@2
+  # task can save/restore it across runs.
+  - name: npm_config_cache
+    value: $(Pipeline.Workspace)/.npm
+
+# -----------------------------------------------------------------------------
+# Default agent pool (overridable per stage / job)
+# -----------------------------------------------------------------------------
+# Microsoft-hosted Ubuntu runner. AAP section 0.6.1 specifies that browser
+# binaries are sized for Linux runners (Chromium ~280 MB, Firefox ~200 MB,
+# WebKit ~150 MB). Self-hosted runners can be substituted by overriding the
+# `pool:` block at the stage level.
+# -----------------------------------------------------------------------------
+pool:
+  vmImage: 'ubuntu-latest'
+
+# =============================================================================
+# Stages
+# =============================================================================
+stages:
+
+  # ===========================================================================
+  # Stage 1: Tier 1 - Smoke (~40 tests, ~3 min wall-time)
+  # ===========================================================================
+  # Runs on every push, every PR, every tag, every scheduled run. PR-blocking
+  # gate per AAP section 0.4.1. Uses Chromium only to minimize cold-start
+  # time on the PR critical path.
+  # ---------------------------------------------------------------------------
+  - stage: Tier1_Smoke
+    displayName: 'Tier 1 - Smoke (~3 min)'
+    jobs:
+      - job: Smoke
+        displayName: 'Smoke Tests (Chromium)'
+        # Budget: 3 min target + 2 min headroom = 5 min hard cap.
+        timeoutInMinutes: 5
+        # Cancel the job after 1 min of inactivity (no log output) - prevents
+        # silent hangs from consuming the full timeout budget.
+        cancelTimeoutInMinutes: 1
+        steps:
+
+          # ----- 1. Tooling: Node.js 20.x -----
+          - task: UseNode@1
+            displayName: 'Use Node.js $(nodeVersion)'
+            inputs:
+              version: $(nodeVersion)
+              checkLatest: false
+
+          # ----- 2. Cache npm packages (keyed on package-lock.json hash) -----
+          - task: Cache@2
+            displayName: 'Cache npm packages'
+            inputs:
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+                npm
+              path: $(npm_config_cache)
+
+          # ----- 3. Install dependencies (deterministic via npm ci) -----
+          - script: npm ci --prefer-offline --no-audit --no-fund
+            displayName: 'npm ci (install dependencies)'
+
+          # ----- 4. Install Chromium binary only (Tier 1 is Chromium-only) -----
+          # AAP section 0.4.1: Tier 1 smoke runs on Chromium only (3-min budget).
+          # `--with-deps` installs the required OS libraries (libgstreamer-plugins-base1.0-0
+          # libgtk-4-1, libpulse0, libavcodec60, etc.) so the browser can launch
+          # in the bare ubuntu-latest image.
+          - script: npx playwright install --with-deps chromium
+            displayName: 'Install Playwright Chromium browser + OS deps'
+
+          # ----- 5. Start Angular dev server (background) -----
+          # The package.json `start:e2e` script is overridden at integration
+          # time to invoke the real Angular dev server (ng serve). The wait-on
+          # step below blocks until the server is ready or 60s elapses.
+          - bash: |
+              set -euo pipefail
+              # Run dev server detached so the script step exits immediately.
+              # Logs are written to dev-server.log for post-mortem upload.
+              nohup npm run start:e2e > dev-server.log 2>&1 &
+              DEV_PID=$!
+              echo "Started Angular dev server (PID=${DEV_PID})"
+              echo "##vso[task.setvariable variable=DevServerPid]${DEV_PID}"
+            displayName: 'Start Angular dev server (background)'
+
+          # ----- 6. Wait for dev server to be ready -----
+          # 60-second hard timeout - if the dev server fails to bind, the
+          # pipeline fails fast rather than waiting for the test timeout.
+          - script: npx wait-on $(E2E_BASE_URL) --timeout 60000 --interval 1000
+            displayName: 'Wait for dev server at $(E2E_BASE_URL)'
+
+          # ----- 7. Run Tier 1 Smoke tests -----
+          # Retries are configured in playwright.config.ts (smoke: retries: 1
+          # in CI). The npm script invokes `playwright test --project=smoke`
+          # which scopes test discovery to e2e/specs/smoke/**/*.smoke.spec.ts.
+          - script: npm run e2e:smoke
+            displayName: 'Run Tier 1 Smoke tests (~40 tests, ~3 min)'
+            env:
+              CI: $(CI)
+              E2E_BASE_URL: $(E2E_BASE_URL)
+              E2E_API_MODE: $(E2E_API_MODE)
+              MOCK_API: $(MOCK_API)
+
+          # ----- 8. Publish JUnit test results -----
+          # condition: always() - publish results even when tests fail so the
+          # Tests tab in Azure DevOps shows the failure breakdown.
+          - task: PublishTestResults@2
+            displayName: 'Publish JUnit test results (Tier 1)'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'test-results/junit.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+              testRunTitle: 'Tier 1 - Smoke'
+              buildConfiguration: 'CI'
+              buildPlatform: '$(Agent.OS)'
+
+          # ----- 9. Publish Playwright HTML report -----
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Playwright HTML report (Tier 1)'
+            condition: always()
+            inputs:
+              targetPath: 'playwright-report'
+              artifact: 'playwright-report-tier-1-smoke-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          # ----- 10. Publish raw test-results (traces, screenshots, videos) -----
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish raw test-results (Tier 1)'
+            condition: always()
+            inputs:
+              targetPath: 'test-results'
+              artifact: 'test-results-tier-1-smoke-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          # ----- 11. Publish dev server log (debug aid on dev-server failures) -----
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Angular dev server log'
+            condition: always()
+            continueOnError: true
+            inputs:
+              targetPath: 'dev-server.log'
+              artifact: 'dev-server-log-tier-1-smoke-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+  # ===========================================================================
+  # Stage 2: Tier 2 - Feature CRUD (~640 tests, ~15 min wall-time)
+  # ===========================================================================
+  # Runs on PR builds, branch builds, and release tags. Skipped on the nightly
+  # schedule (which runs Tier 3 directly to maximize cross-browser coverage).
+  # Uses 4-way sharding via Azure DevOps `parallel: 4` strategy.
+  # ---------------------------------------------------------------------------
+  - stage: Tier2_FeatureCrud
+    displayName: 'Tier 2 - Feature CRUD (~15 min)'
+    dependsOn: Tier1_Smoke
+    # Run only when Tier 1 succeeded AND the build is not the scheduled run.
+    # Rationale: nightly is dedicated to Tier 3; Tier 2 already covered the
+    # CRUD surface during the latest PR / branch build that triggered it.
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'Schedule'))
+    jobs:
+      - job: CrudShard
+        displayName: 'Feature CRUD Shard $(System.JobPositionInPhase)/$(System.TotalJobsInPhase)'
+        # Budget: 15 min target + 10 min headroom = 25 min hard cap per shard.
+        # Per-shard budget is much lower than the aggregate since 4 shards
+        # run in parallel.
+        timeoutInMinutes: 25
+        cancelTimeoutInMinutes: 1
+        # 4-way sharding (AAP section 0.9.1). Playwright's built-in --shard
+        # flag distributes tests deterministically by hashing test IDs.
+        strategy:
+          parallel: 4
+        steps:
+
+          - task: UseNode@1
+            displayName: 'Use Node.js $(nodeVersion)'
+            inputs:
+              version: $(nodeVersion)
+              checkLatest: false
+
+          - task: Cache@2
+            displayName: 'Cache npm packages'
+            inputs:
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+                npm
+              path: $(npm_config_cache)
+
+          - script: npm ci --prefer-offline --no-audit --no-fund
+            displayName: 'npm ci (install dependencies)'
+
+          # Tier 2 is Chromium-only on the PR critical path (cross-browser
+          # coverage is provided by the Tier 3 nightly matrix).
+          - script: npx playwright install --with-deps chromium
+            displayName: 'Install Playwright Chromium browser + OS deps'
+
+          - bash: |
+              set -euo pipefail
+              nohup npm run start:e2e > dev-server.log 2>&1 &
+              DEV_PID=$!
+              echo "Started Angular dev server (PID=${DEV_PID})"
+              echo "##vso[task.setvariable variable=DevServerPid]${DEV_PID}"
+            displayName: 'Start Angular dev server (background)'
+
+          - script: npx wait-on $(E2E_BASE_URL) --timeout 60000 --interval 1000
+            displayName: 'Wait for dev server at $(E2E_BASE_URL)'
+
+          # ----- Tier 2 sharded test invocation -----
+          # System.JobPositionInPhase is 1-indexed (1, 2, 3, 4); Playwright's
+          # --shard expects N/M form where N <= M. The npm script alias is
+          # used (npm run e2e:crud) and the shard flag is passed after `--`
+          # so npm forwards it to playwright test.
+          - script: npm run e2e:crud -- --shard=$(System.JobPositionInPhase)/$(System.TotalJobsInPhase)
+            displayName: 'Run Tier 2 CRUD tests (shard $(System.JobPositionInPhase)/$(System.TotalJobsInPhase))'
+            env:
+              CI: $(CI)
+              E2E_BASE_URL: $(E2E_BASE_URL)
+              E2E_API_MODE: $(E2E_API_MODE)
+              MOCK_API: $(MOCK_API)
+
+          - task: PublishTestResults@2
+            displayName: 'Publish JUnit test results (Tier 2 shard $(System.JobPositionInPhase))'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'test-results/junit.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+              testRunTitle: 'Tier 2 - Feature CRUD (shard $(System.JobPositionInPhase)/$(System.TotalJobsInPhase))'
+              buildConfiguration: 'CI'
+              buildPlatform: '$(Agent.OS)'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Playwright HTML report (Tier 2 shard $(System.JobPositionInPhase))'
+            condition: always()
+            inputs:
+              targetPath: 'playwright-report'
+              artifact: 'playwright-report-tier-2-crud-shard-$(System.JobPositionInPhase)-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish raw test-results (Tier 2 shard $(System.JobPositionInPhase))'
+            condition: always()
+            inputs:
+              targetPath: 'test-results'
+              artifact: 'test-results-tier-2-crud-shard-$(System.JobPositionInPhase)-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Angular dev server log (Tier 2 shard $(System.JobPositionInPhase))'
+            condition: always()
+            continueOnError: true
+            inputs:
+              targetPath: 'dev-server.log'
+              artifact: 'dev-server-log-tier-2-shard-$(System.JobPositionInPhase)-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+  # ===========================================================================
+  # Stage 3: Tier 3 - Integration / Edge Cases (~130 tests, ~25 min)
+  # ===========================================================================
+  # Runs on: scheduled nightly, release/* tag pushes, and manual triggers.
+  # Skipped on regular PR / branch builds (~25 min budget would dominate the
+  # PR critical path - Tier 3 protects release gates and cross-browser drift).
+  # Uses cross-browser matrix (Chromium + Firefox + WebKit).
+  # ---------------------------------------------------------------------------
+  - stage: Tier3_Integration
+    displayName: 'Tier 3 - Integration / Edge Cases (~25 min)'
+    dependsOn: Tier2_FeatureCrud
+    # Run when:
+    #   (a) Tier 2 succeeded AND build is the scheduled nightly (Tier 2 will
+    #       be skipped on schedule, so this branch won't actually fire), OR
+    #   (b) Build is the scheduled nightly (catches the dependsOn skip), OR
+    #   (c) Build is a release/* tag (pre-release gate per AAP section 0.4.1), OR
+    #   (d) Build was triggered manually (ad-hoc full-suite run).
+    # Note: To run Tier 3 on every PR after Tier 2, change to
+    #       `or(succeeded(), eq(variables['Build.Reason'], 'Schedule'))`.
+    condition: |
+      or(
+        eq(variables['Build.Reason'], 'Schedule'),
+        startsWith(variables['Build.SourceBranch'], 'refs/tags/release/'),
+        eq(variables['Build.Reason'], 'Manual')
+      )
+    jobs:
+      - job: IntegrationCrossBrowser
+        displayName: 'Integration ($(browser))'
+        # Budget: 25 min target + 10 min headroom = 35 min hard cap per browser.
+        timeoutInMinutes: 35
+        cancelTimeoutInMinutes: 1
+        # Cross-browser matrix per AAP section 0.4.1: chromium, firefox, webkit.
+        # Each matrix axis is mapped to its corresponding playwright.config.ts
+        # project name (`integration`, `integration-firefox`, `integration-webkit`).
+        strategy:
+          matrix:
+            Chromium:
+              browser: 'chromium'
+              playwrightProject: 'integration'
+            Firefox:
+              browser: 'firefox'
+              playwrightProject: 'integration-firefox'
+            WebKit:
+              browser: 'webkit'
+              playwrightProject: 'integration-webkit'
+          maxParallel: 3
+        steps:
+
+          - task: UseNode@1
+            displayName: 'Use Node.js $(nodeVersion)'
+            inputs:
+              version: $(nodeVersion)
+              checkLatest: false
+
+          - task: Cache@2
+            displayName: 'Cache npm packages'
+            inputs:
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+                npm
+              path: $(npm_config_cache)
+
+          - script: npm ci --prefer-offline --no-audit --no-fund
+            displayName: 'npm ci (install dependencies)'
+
+          # Install only the matrix-axis browser to minimize cold-start cost.
+          # `$(browser)` is the matrix variable defined above (chromium /
+          # firefox / webkit). `--with-deps` installs OS libraries.
+          - script: npx playwright install --with-deps $(browser)
+            displayName: 'Install Playwright $(browser) browser + OS deps'
+
+          - bash: |
+              set -euo pipefail
+              nohup npm run start:e2e > dev-server.log 2>&1 &
+              DEV_PID=$!
+              echo "Started Angular dev server (PID=${DEV_PID})"
+              echo "##vso[task.setvariable variable=DevServerPid]${DEV_PID}"
+            displayName: 'Start Angular dev server (background)'
+
+          - script: npx wait-on $(E2E_BASE_URL) --timeout 60000 --interval 1000
+            displayName: 'Wait for dev server at $(E2E_BASE_URL)'
+
+          # ----- Tier 3 cross-browser test invocation -----
+          # The npm script (`npm run e2e:integration`) hard-codes
+          # `--project=integration`, so we bypass it and call playwright test
+          # directly with the matrix-axis project. This is consistent with the
+          # AAP section 0.9.1 cross-browser execution example:
+          #   npx playwright test --project=integration-firefox
+          - script: npx playwright test --project=$(playwrightProject)
+            displayName: 'Run Tier 3 Integration tests on $(browser)'
+            env:
+              CI: $(CI)
+              E2E_BASE_URL: $(E2E_BASE_URL)
+              E2E_API_MODE: $(E2E_API_MODE)
+              MOCK_API: $(MOCK_API)
+
+          - task: PublishTestResults@2
+            displayName: 'Publish JUnit test results (Tier 3 $(browser))'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'test-results/junit.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+              testRunTitle: 'Tier 3 - Integration ($(browser))'
+              buildConfiguration: 'CI'
+              buildPlatform: '$(Agent.OS)'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Playwright HTML report (Tier 3 $(browser))'
+            condition: always()
+            inputs:
+              targetPath: 'playwright-report'
+              artifact: 'playwright-report-tier-3-integration-$(browser)-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish raw test-results (Tier 3 $(browser))'
+            condition: always()
+            inputs:
+              targetPath: 'test-results'
+              artifact: 'test-results-tier-3-integration-$(browser)-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Angular dev server log (Tier 3 $(browser))'
+            condition: always()
+            continueOnError: true
+            inputs:
+              targetPath: 'dev-server.log'
+              artifact: 'dev-server-log-tier-3-integration-$(browser)-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+  # ===========================================================================
+  # Stage 4: Tier 3 - Live API (Nightly only)
+  # ===========================================================================
+  # Runs Tier 3 against the real Whoville staging backend (no mocks). Used to
+  # detect drift between the mocked API responses (e2e/fixtures/api-responses/**)
+  # and the real backend contract. Per AAP section 0.10.2, fixtures should be
+  # refreshed quarterly from any drift surfaced here.
+  #
+  # IMPORTANT: This stage requires the `whoville-staging-config` and
+  # `whoville-e2e-secrets` variable groups (referenced via the `group:` syntax
+  # below). Define these in Project Settings -> Pipelines -> Library before
+  # enabling this stage.
+  # ---------------------------------------------------------------------------
+  - stage: Tier3_Integration_LiveApi
+    displayName: 'Tier 3 - Live API (Nightly only)'
+    dependsOn: Tier1_Smoke
+    # Only run on the scheduled nightly. Excludes PR, branch, tag, and manual
+    # triggers - the live backend is a finite resource and ad-hoc runs would
+    # contaminate test data and waste staging API credits.
+    condition: |
+      and(
+        succeeded(),
+        eq(variables['Build.Reason'], 'Schedule')
+      )
+    variables:
+      # Variable groups (defined in Azure DevOps Project Settings -> Library).
+      # The pipeline run will fail at queue time if either group is missing,
+      # which is the desired behavior - we never want this stage to silently
+      # fall back to mock mode.
+      - group: whoville-e2e-secrets
+      - group: whoville-staging-config
+      # Override default mock-mode variables. The mock-api fixture reads
+      # E2E_API_MODE on test start and skips page.route() registration when
+      # the value is 'live'.
+      - name: E2E_API_MODE
+        value: 'live'
+      - name: MOCK_API
+        value: 'false'
+    jobs:
+      - job: LiveApi
+        displayName: 'Tier 3 Integration vs Live Staging Backend'
+        # Budget: 25 min target + 10 min headroom = 35 min hard cap. Live-API
+        # runs are slightly slower than mocked due to network latency and
+        # real-backend rate limits.
+        timeoutInMinutes: 35
+        cancelTimeoutInMinutes: 1
+        steps:
+
+          - task: UseNode@1
+            displayName: 'Use Node.js $(nodeVersion)'
+            inputs:
+              version: $(nodeVersion)
+              checkLatest: false
+
+          - task: Cache@2
+            displayName: 'Cache npm packages'
+            inputs:
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+                npm
+              path: $(npm_config_cache)
+
+          - script: npm ci --prefer-offline --no-audit --no-fund
+            displayName: 'npm ci (install dependencies)'
+
+          # Live-API mode runs Chromium-only (cross-browser drift is covered
+          # by Stage 3). Saves ~450 MB of browser binary download time.
+          - script: npx playwright install --with-deps chromium
+            displayName: 'Install Playwright Chromium browser + OS deps'
+
+          # ----- Tier 3 Live API test invocation -----
+          # No local dev server - tests target the real staging backend at
+          # E2E_BASE_URL_STAGING (sourced from `whoville-staging-config`
+          # variable group). The mock-api fixture is bypassed because
+          # E2E_API_MODE=live (set in the stage `variables` block above).
+          - script: npx playwright test --project=integration
+            displayName: 'Run Tier 3 Integration tests against live staging API'
+            env:
+              CI: $(CI)
+              # E2E_BASE_URL_STAGING comes from the variable group; falls back
+              # to the default mock URL if the group is missing (which causes
+              # the stage to fail at queue time anyway, so this fallback is
+              # purely defensive).
+              E2E_BASE_URL: $(E2E_BASE_URL_STAGING)
+              E2E_API_MODE: $(E2E_API_MODE)
+              MOCK_API: $(MOCK_API)
+              # Test-user credentials sourced from `whoville-e2e-secrets`.
+              # global-setup.ts uses these to authenticate and persist
+              # storage-state JSON for downstream tests.
+              E2E_TEST_USER_USERNAME: $(E2E_TEST_USER_USERNAME)
+              E2E_TEST_USER_PASSWORD: $(E2E_TEST_USER_PASSWORD)
+
+          - task: PublishTestResults@2
+            displayName: 'Publish JUnit test results (Tier 3 Live API)'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'test-results/junit.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+              testRunTitle: 'Tier 3 - Live API'
+              buildConfiguration: 'CI'
+              buildPlatform: '$(Agent.OS)'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Playwright HTML report (Tier 3 Live API)'
+            condition: always()
+            inputs:
+              targetPath: 'playwright-report'
+              artifact: 'playwright-report-tier-3-live-api-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish raw test-results (Tier 3 Live API)'
+            condition: always()
+            inputs:
+              targetPath: 'test-results'
+              artifact: 'test-results-tier-3-live-api-$(System.JobAttempt)'
+              publishLocation: 'pipeline'
