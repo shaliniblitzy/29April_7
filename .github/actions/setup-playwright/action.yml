@@ -1,0 +1,244 @@
+# =============================================================================
+# Composite GitHub Action: Setup Playwright
+# -----------------------------------------------------------------------------
+# Purpose
+#   Provides a single, opinionated "one-stop" setup step for every Playwright
+#   end-to-end (E2E) workflow in this repository. The action installs Node.js,
+#   restores the npm dependency cache, runs `npm ci`, dynamically resolves the
+#   exact `@playwright/test` version from the consumer's `package-lock.json`,
+#   restores (or populates) the Playwright browser-binary cache keyed by that
+#   version, and finally installs the requested browser binaries together with
+#   their host OS-level shared libraries.
+#
+# Authority
+#   Mandated by the Agent Action Plan (AAP) section 0.5.1.14 and required by
+#   the five Playwright workflow files in `.github/workflows/`:
+#     - e2e-tier-1-smoke.yml
+#     - e2e-tier-2-crud.yml
+#     - e2e-tier-3-integration.yml
+#     - e2e-cross-browser-nightly.yml
+#     - e2e-live-api-nightly.yml
+#
+# Migration-Proofing (AAP section 0.10.2)
+#   This action does NOT hardcode any Playwright version. The version is
+#   resolved at runtime from the consumer's installed `@playwright/test`
+#   package, so the cache key automatically rotates when the consumer bumps
+#   Playwright, with no edits to this file required.
+#
+# Supply Chain
+#   Uses ONLY first-party GitHub Actions: `actions/setup-node@v4` and
+#   `actions/cache@v4`. No third-party actions; safe for air-gapped or
+#   self-hosted runners with the standard GitHub Actions runtime.
+#
+# Consumer Contract (example)
+#   - name: Setup Playwright environment
+#     uses: ./.github/actions/setup-playwright
+#     with:
+#       node-version: '20'
+#       browsers: 'chromium'   # or 'firefox', 'webkit', 'chromium,firefox,webkit', 'all'
+#       working-directory: '.'
+#       cache: 'npm'
+# =============================================================================
+
+name: 'Setup Playwright'
+description: 'Composite action that installs Node.js, runs npm ci, caches Playwright browser binaries, and installs Playwright browsers with their OS dependencies.'
+author: 'Whoville Engineering'
+
+# -----------------------------------------------------------------------------
+# Inputs
+# -----------------------------------------------------------------------------
+# All inputs are optional; consumer workflows may rely on the defaults defined
+# below for the most common scenario (Linux runner, Node 20, Chromium-only
+# install, repo-root working directory, npm cache).
+# -----------------------------------------------------------------------------
+inputs:
+  node-version:
+    description: 'Node.js version to install on the runner. Pass an empty string to fall back to e2e/.nvmrc.'
+    required: false
+    default: '20'
+  browsers:
+    description: 'Comma-separated list of Playwright browser binaries to install. Accepted values: any combination of chromium, firefox, webkit, OR the keyword "all" which expands to "chromium firefox webkit".'
+    required: false
+    default: 'chromium'
+  working-directory:
+    description: 'Working directory containing package.json and package-lock.json. Used by npm ci and the Playwright install commands.'
+    required: false
+    default: '.'
+  cache:
+    description: 'Cache strategy passed to actions/setup-node (typical values: npm, yarn, pnpm).'
+    required: false
+    default: 'npm'
+
+# -----------------------------------------------------------------------------
+# Outputs
+# -----------------------------------------------------------------------------
+# `playwright-version` exposes the dynamically-resolved Playwright version so
+# that downstream workflow steps (e.g., custom reporting, artifact tagging)
+# can reference the exact framework version that was used during the run.
+# -----------------------------------------------------------------------------
+outputs:
+  playwright-version:
+    description: 'The Playwright version that was resolved and used for the cache key (matches the @playwright/test version installed by npm ci).'
+    value: ${{ steps.playwright-version.outputs.version }}
+
+# -----------------------------------------------------------------------------
+# Composite Runs Block
+# -----------------------------------------------------------------------------
+# The seven steps execute in the order specified by the AAP. Every `run:` step
+# explicitly declares `shell: bash` because composite actions do not inherit a
+# default shell from the workflow that consumes them.
+# -----------------------------------------------------------------------------
+runs:
+  using: 'composite'
+  steps:
+    # -------------------------------------------------------------------------
+    # Step 1 of 7: Setup Node.js
+    # -------------------------------------------------------------------------
+    # Installs the requested Node.js version and configures the npm cache.
+    # When `node-version` is the empty string, falls back to `e2e/.nvmrc`
+    # via `node-version-file`. Passing an empty string to `node-version-file`
+    # is treated as unset by actions/setup-node, so when the consumer
+    # supplies a concrete `node-version` value the file fallback is ignored.
+    # -------------------------------------------------------------------------
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        node-version-file: ${{ inputs.node-version == '' && 'e2e/.nvmrc' || '' }}
+        cache: ${{ inputs.cache }}
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    # -------------------------------------------------------------------------
+    # Step 2 of 7: Install npm Dependencies
+    # -------------------------------------------------------------------------
+    # `npm ci` is preferred over `npm install` for CI reproducibility because
+    # it strictly honours `package-lock.json` and aborts on any drift.
+    # -------------------------------------------------------------------------
+    - name: Install npm dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm ci
+
+    # -------------------------------------------------------------------------
+    # Step 3 of 7: Determine Playwright Version
+    # -------------------------------------------------------------------------
+    # Resolves the exact @playwright/test version that was just installed by
+    # `npm ci`. The primary source is the installed CLI (most authoritative
+    # because it reads the actual binary on disk). The fallback parses
+    # `package-lock.json` and supports both the npm v1 schema (used in the
+    # Angular 11 era) and the npm v2/v3 schema. The resolved value is
+    # exported as a step output and consumed by the cache key in Step 4.
+    # -------------------------------------------------------------------------
+    - name: Determine Playwright version
+      id: playwright-version
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -euo pipefail
+        # Prefer the installed binary's version (handles all lockfile schema versions).
+        # `npx --no-install` ensures we never trigger a network download here; if
+        # @playwright/test is missing after `npm ci` we want to fail loudly.
+        if RAW=$(npx --no-install playwright --version 2>/dev/null); then
+          # The CLI prints either "Version 1.59.1" or just "1.59.1" depending
+          # on release; strip the optional "Version " prefix.
+          VERSION="${RAW#Version }"
+        elif [ -f package-lock.json ]; then
+          VERSION=$(node -e "
+            const lock = require('./package-lock.json');
+            const pkg = (lock.packages && lock.packages['node_modules/@playwright/test'])
+                     || (lock.dependencies && lock.dependencies['@playwright/test']);
+            if (!pkg || !pkg.version) {
+              console.error('@playwright/test not found in package-lock.json');
+              process.exit(1);
+            }
+            console.log(pkg.version);
+          ")
+        else
+          echo 'ERROR: Cannot resolve Playwright version. Neither npx playwright --version nor package-lock.json is available.' >&2
+          exit 1
+        fi
+        if [ -z "${VERSION}" ]; then
+          echo 'ERROR: Resolved Playwright version is empty.' >&2
+          exit 1
+        fi
+        echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        echo "Detected Playwright version: ${VERSION}"
+
+    # -------------------------------------------------------------------------
+    # Step 4 of 7: Restore Playwright Browser Cache
+    # -------------------------------------------------------------------------
+    # Caches `~/.cache/ms-playwright`, the directory where Playwright stores
+    # its browser binaries on Linux/macOS. The cache key combines the
+    # runner OS (preventing cross-OS binary poisoning) with the Playwright
+    # version (preventing cross-version poisoning). The `restore-keys`
+    # fall-through allows an older cache to seed `~/.cache/ms-playwright`
+    # for partial reuse; Playwright's installer detects mismatched binaries
+    # and re-downloads only the missing ones.
+    # -------------------------------------------------------------------------
+    - name: Restore Playwright browser cache
+      id: playwright-cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
+    # -------------------------------------------------------------------------
+    # Step 5 of 7: Resolve Browser List
+    # -------------------------------------------------------------------------
+    # Translates the comma-separated `browsers` input into the space-separated
+    # list expected by the Playwright CLI. Special-cases the keyword "all"
+    # which expands to "chromium firefox webkit". Aborts on an empty result
+    # to surface configuration errors immediately rather than silently doing
+    # nothing in the install step.
+    # -------------------------------------------------------------------------
+    - name: Resolve browser list
+      id: browser-list
+      shell: bash
+      run: |
+        set -euo pipefail
+        INPUT_BROWSERS="${{ inputs.browsers }}"
+        if [ "${INPUT_BROWSERS}" = "all" ]; then
+          LIST="chromium firefox webkit"
+        else
+          # Replace commas with spaces, collapse duplicate whitespace, trim ends.
+          LIST=$(echo "${INPUT_BROWSERS}" | tr ',' ' ' | tr -s ' ' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        fi
+        if [ -z "${LIST}" ]; then
+          echo 'ERROR: Resolved browser list is empty.' >&2
+          exit 1
+        fi
+        echo "list=${LIST}" >> "$GITHUB_OUTPUT"
+        echo "Browsers to install: ${LIST}"
+
+    # -------------------------------------------------------------------------
+    # Step 6 of 7: Install Playwright Browsers (Cache Miss Path)
+    # -------------------------------------------------------------------------
+    # Runs only when the exact-version cache key was not hit. Installs both
+    # the browser binaries AND the host OS-level shared libraries via
+    # `--with-deps`. This is the slow path; expect 60-180 seconds depending
+    # on the browser set and runner type.
+    # -------------------------------------------------------------------------
+    - name: Install Playwright browsers (with system deps)
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx playwright install --with-deps ${{ steps.browser-list.outputs.list }}
+
+    # -------------------------------------------------------------------------
+    # Step 7 of 7: Install Playwright OS Dependencies (Cache Hit Path)
+    # -------------------------------------------------------------------------
+    # When the browser-binary cache hit, the binaries themselves are already
+    # in `~/.cache/ms-playwright`, but the OS-level libraries (libnss,
+    # libgbm, libgstreamer, etc.) live in system paths and are NOT cached
+    # by actions/cache@v4 because they are owned by the package manager
+    # outside the runner home directory. This step installs only those OS
+    # dependencies, completing the environment without re-downloading the
+    # browser binaries.
+    # -------------------------------------------------------------------------
+    - name: Install Playwright OS dependencies (cache hit path)
+      if: steps.playwright-cache.outputs.cache-hit == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx playwright install-deps ${{ steps.browser-list.outputs.list }}
