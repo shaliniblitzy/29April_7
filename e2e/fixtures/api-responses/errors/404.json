@@ -1,0 +1,16 @@
+{
+  "error": "not_found",
+  "message": "The requested resource could not be found. It may have been deleted or the link may be incorrect.",
+  "code": "RES-404-001",
+  "timestamp": "2026-05-01T12:00:00.000Z",
+  "path": "/api/workforce/teams/team-does-not-exist",
+  "traceId": "00000000-0000-4000-8000-000000000404",
+  "resource": "team",
+  "resourceId": "team-does-not-exist",
+  "details": {
+    "lookupCriteria": {
+      "id": "team-does-not-exist"
+    },
+    "suggestion": "Verify the resource identifier or return to the list view to browse available items."
+  }
+}
