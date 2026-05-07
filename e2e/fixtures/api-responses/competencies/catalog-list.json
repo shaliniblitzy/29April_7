@@ -1,0 +1,85 @@
+{
+  "data": [
+    {
+      "id": "cat-001",
+      "name": "Engineering",
+      "displayName": "Engineering Competencies",
+      "description": "Technical engineering competencies covering software development, system design, code-review craft, container operations, CI/CD pipelines, and incident response. The foundation skill catalog for all engineering employees.",
+      "code": "ENG",
+      "category": "Engineering",
+      "skillCount": 6,
+      "status": "active",
+      "ownerId": "user-jdoe",
+      "ownerName": "Jane Doe",
+      "tags": ["engineering", "technical", "software"],
+      "createdAt": "2026-01-15T10:00:00Z",
+      "updatedAt": "2026-04-15T10:00:00Z"
+    },
+    {
+      "id": "cat-002",
+      "name": "Leadership",
+      "displayName": "Leadership Competencies",
+      "description": "Leadership competencies for individual contributors and managers covering stakeholder management, mentoring, coaching, and team dynamics. Applicable across engineering, product, and operations functions.",
+      "code": "LEAD",
+      "category": "Leadership",
+      "skillCount": 2,
+      "status": "active",
+      "ownerId": "user-spatel",
+      "ownerName": "Sara Patel",
+      "tags": ["leadership", "management", "mentoring"],
+      "createdAt": "2026-01-20T10:00:00Z",
+      "updatedAt": "2026-04-20T10:00:00Z"
+    },
+    {
+      "id": "cat-003",
+      "name": "Communication",
+      "displayName": "Communication Competencies",
+      "description": "Cross-cutting communication competencies for facilitating collaboration across teams, presenting to stakeholders, and writing clear technical and business documents.",
+      "code": "COMM",
+      "category": "Communication",
+      "skillCount": 1,
+      "status": "active",
+      "ownerId": "user-thill",
+      "ownerName": "Taylor Hill",
+      "tags": ["communication", "soft-skills", "collaboration"],
+      "createdAt": "2026-02-01T10:00:00Z",
+      "updatedAt": "2026-04-22T10:00:00Z"
+    },
+    {
+      "id": "cat-004",
+      "name": "Domain Knowledge",
+      "displayName": "Domain Knowledge Competencies",
+      "description": "Whoville-Client domain-specific competencies covering bounded-context architecture, internal frameworks, integration patterns, and the historical and current product domain models.",
+      "code": "DOM",
+      "category": "Domain Knowledge",
+      "skillCount": 2,
+      "status": "active",
+      "ownerId": "user-bjones",
+      "ownerName": "Brett Jones",
+      "tags": ["domain-knowledge", "architecture", "product"],
+      "createdAt": "2026-02-10T10:00:00Z",
+      "updatedAt": "2026-04-25T10:00:00Z"
+    },
+    {
+      "id": "cat-005",
+      "name": "Operations",
+      "displayName": "Operations Competencies",
+      "description": "Operational competencies for non-engineering operations roles. Currently inactive pending re-scoping under a unified operations excellence catalog.",
+      "code": "OPS",
+      "category": "Operations",
+      "skillCount": 0,
+      "status": "inactive",
+      "ownerId": "user-mlee",
+      "ownerName": "Michelle Lee",
+      "tags": ["operations", "process", "deprecated-temporarily"],
+      "createdAt": "2026-02-15T10:00:00Z",
+      "updatedAt": "2026-03-01T10:00:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "size": 20,
+    "total": 5,
+    "totalPages": 1
+  }
+}
