@@ -52,8 +52,15 @@ export type {
 // App Core / cross-cutting — User entity
 // ---------------------------------------------------------------------------
 
-export { userFactory } from './user.factory';
-export type { User, UserRole, UserStatus } from './user.factory';
+export {
+  userFactory,
+  adminUserFactory,
+  viewerUserFactory,
+  restrictedUserFactory,
+  managerUserFactory,
+  auditorUserFactory,
+} from './user.factory';
+export type { User, UserRole } from './user.factory';
 
 // ---------------------------------------------------------------------------
 // Workforce module — Team and WorkforceAssignment entities
