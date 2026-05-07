@@ -1,6 +1,24 @@
-# This directory holds Playwright storageState JSON files generated at test
-# start by e2e/global-setup.ts.
+# Placeholder ensuring e2e/storage-states/ directory exists in git.
 #
-# The *.json files in this directory are gitignored (see /.gitignore) because
-# they may contain valid auth tokens. This .gitkeep file exists only so the
-# directory is preserved in version control.
+# This directory holds Playwright `storageState` JSON files that cache
+# authenticated browser context (cookies, localStorage, sessionStorage)
+# per role. The JSON files are:
+#   - Generated at suite startup by e2e/global-setup.ts (or via
+#     `npm run e2e:generate-storage-states`).
+#   - Consumed by e2e/fixtures/auth.fixture.ts to skip per-test login.
+#   - Gitignored (per `.gitignore` rule `e2e/storage-states/*.json`).
+#   - Reset on every CI run; preserved locally for fast iteration.
+#
+# Per-role files (each generated only if the corresponding env vars are set):
+#   - canonical-user.json   (default authenticated user)
+#   - admin-user.json       (admin role)
+#   - viewer-user.json      (read-only viewer role)
+#   - restricted-user.json  (under-privileged user for denial-path tests)
+#
+# References:
+#   - AAP §0.4.4 (Test Data and Fixtures Design)
+#   - AAP §0.5.1.2 (.gitkeep placeholder requirement)
+#   - AAP §0.10.2 (Storage state lifecycle)
+#   - e2e/global-setup.ts (generation logic)
+#   - e2e/global-teardown.ts (cleanup logic)
+#   - e2e/fixtures/auth.fixture.ts (consumption logic)
