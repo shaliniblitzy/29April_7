@@ -1,0 +1,142 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.e2e.json",
+    "tsconfigRootDir": ".",
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "env": {
+    "node": true,
+    "es2020": true
+  },
+  "plugins": ["@typescript-eslint", "playwright"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:playwright/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-misused-promises": "error",
+    "@typescript-eslint/await-thenable": "error",
+    "@typescript-eslint/no-require-imports": "off",
+    "no-console": ["warn", { "allow": ["warn", "error", "info", "log"] }],
+    "playwright/expect-expect": "error",
+    "playwright/no-wait-for-timeout": "error",
+    "playwright/prefer-web-first-assertions": "error",
+    "playwright/no-element-handle": "error",
+    "playwright/no-eval": "error",
+    "playwright/no-page-pause": "warn",
+    "playwright/no-skipped-test": "warn",
+    "playwright/no-focused-test": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["../../*"],
+            "message": "Use path aliases (@e2e/*, @pages/*, @fixtures/*, @factories/*, @mocks/*, @patterns/*, @utils/*) instead of deep relative imports."
+          },
+          {
+            "group": ["src/app/*", "src/main.ts"],
+            "message": "Do not import application source code into E2E specs. E2E exercises the running app via HTTP, not source modules."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@playwright/test",
+                "message": "Spec files must import { test, expect } from '@fixtures' (composed fixtures), not directly from '@playwright/test'."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["../../*", "../../../*"],
+                "message": "Use path aliases (@pages, @fixtures, @factories, @mocks, @patterns, @utils) instead of deep relative imports."
+              }
+            ]
+          }
+        ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.object.name='page'][callee.property.name='locator'][arguments.0.type='Literal'][arguments.0.value=/^(css=|xpath=|id=|text=|\\.|\\#|\\[)/]",
+            "message": "Spec files must NOT contain raw page.locator() selectors. Move selectors into a Page Object Model class under e2e/pages/. See e2e/README.md -> 'Page Object Model Conventions'."
+          },
+          {
+            "selector": "CallExpression[callee.object.name='page'][callee.property.name='waitForTimeout']",
+            "message": "Do not use page.waitForTimeout(). Use Playwright's auto-waiting locators or web-first assertions instead."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.page.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "error",
+        "playwright/no-element-handle": "error",
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@fixtures*"],
+                "message": "Page Object Model classes must NOT import from @fixtures (which are test-scoped). POMs receive `page` via constructor and remain framework-agnostic."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.fixture.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["**/*.handler.ts", "**/*.factory.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["e2e/scripts/**/*.ts"],
+      "rules": {
+        "no-console": "off",
+        "@typescript-eslint/no-floating-promises": "warn"
+      }
+    },
+    {
+      "files": ["e2e/global-setup.ts", "e2e/global-teardown.ts"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "playwright-report",
+    "test-results",
+    ".tsc-output",
+    "storage-states/*.json",
+    "fixtures/api-responses/**/*.json"
+  ]
+}
