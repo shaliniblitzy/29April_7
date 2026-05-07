@@ -1,0 +1,63 @@
+{
+  "error": "validation_failed",
+  "message": "The submitted data could not be processed because one or more fields are invalid. Please review the highlighted fields and try again.",
+  "code": "VAL-422-001",
+  "timestamp": "2026-05-01T12:00:00.000Z",
+  "path": "/api/workforce/teams",
+  "traceId": "00000000-0000-4000-8000-000000000422",
+  "fields": [
+    {
+      "field": "name",
+      "errors": [
+        "required",
+        "must_be_unique"
+      ],
+      "messages": [
+        "Name is required.",
+        "A team with this name already exists."
+      ],
+      "rejectedValue": ""
+    },
+    {
+      "field": "manager",
+      "errors": [
+        "required"
+      ],
+      "messages": [
+        "Manager is required."
+      ],
+      "rejectedValue": null
+    },
+    {
+      "field": "size",
+      "errors": [
+        "out_of_range"
+      ],
+      "messages": [
+        "Team size must be between 1 and 500."
+      ],
+      "rejectedValue": 0,
+      "constraints": {
+        "min": 1,
+        "max": 500
+      }
+    },
+    {
+      "field": "description",
+      "errors": [
+        "max_length_exceeded"
+      ],
+      "messages": [
+        "Description must be 500 characters or fewer."
+      ],
+      "rejectedValueLength": 1024,
+      "constraints": {
+        "maxLength": 500
+      }
+    }
+  ],
+  "details": {
+    "totalFieldErrors": 5,
+    "fieldsAffected": 4
+  }
+}
