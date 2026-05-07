@@ -1,0 +1,45 @@
+{
+  "id": "e2e-canonical-user-001",
+  "username": "e2e-test-canonical-user",
+  "email": "e2e-test-canonical-user@whoville.example.internal",
+  "displayName": "E2E Canonical User",
+  "firstName": "E2E",
+  "lastName": "CanonicalUser",
+  "department": "Engineering",
+  "title": "Senior Manager, Engineering",
+  "manager": "asmith",
+  "employeeId": "EMP-E2E-0001",
+  "roles": ["manager"],
+  "permissions": [
+    "workforce.read",
+    "workforce.write",
+    "assessments.read",
+    "assessments.write",
+    "competencies.read",
+    "competencies.write",
+    "authorization.read"
+  ],
+  "lastLogin": "2026-05-01T11:55:00.000Z",
+  "sessionStartedAt": "2026-05-01T12:00:00.000Z",
+  "tokenExpiresAt": "2026-05-01T13:00:00.000Z",
+  "mfaEnabled": false,
+  "mfaMethods": [],
+  "preferences": {
+    "theme": "light",
+    "locale": "en-US",
+    "timezone": "America/New_York",
+    "dateFormat": "MM/DD/YYYY",
+    "notificationsEnabled": true
+  },
+  "featureFlags": {
+    "newAssessmentUi": false,
+    "betaWorkforceCharts": false,
+    "competenciesV2": false
+  },
+  "_links": {
+    "self": "/api/auth/me",
+    "logout": "/api/auth/logout",
+    "refresh": "/api/auth/refresh",
+    "profile": "/api/users/e2e-canonical-user-001"
+  }
+}
