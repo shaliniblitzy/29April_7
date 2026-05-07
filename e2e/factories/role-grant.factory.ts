@@ -378,6 +378,47 @@ const MAX_DESCRIPTION_WORDS = 10;
 const MAX_REASON_WORDS = 15;
 
 // ---------------------------------------------------------------------------
+// Determinism anchor (per AAP §0.4.4)
+//
+// Faker's `date.*` API family — `recent`, `between`, `anytime`, `future`,
+// `past` — defaults `refDate` to `new Date()` (the wall-clock). Successive
+// invocations under the SAME seed therefore produce ms-level drift in any
+// generated ISO timestamp, breaking the byte-identical reproducibility that
+// the AAP §0.4.4 contract requires ("randomized but deterministic
+// (seedable) entity instances"). QA Issue #3 reproduced this defect at
+// ~10% rate.
+//
+// The fix: derive a date anchor purely from the seeded RNG via
+// `faker.number.int()` over a FIXED epoch-millisecond range that does not
+// reference `Date.now()` / `new Date()` at all. The two constants below
+// span 2020-01-01 → 2030-12-31 UTC, a window large enough to produce
+// realistic-looking timestamps for the lifetime of this test suite without
+// ever depending on the wall-clock.
+//
+// All `faker.date.*` calls in the factories below pass an explicit
+// `refDate: dateAnchor` (or use the anchor directly as a `to` / `from`
+// bound) so the entire date-generation graph is seed-deterministic.
+// ---------------------------------------------------------------------------
+
+/** Lower bound of the deterministic date anchor: 2020-01-01T00:00:00.000Z. */
+const ANCHOR_MIN_EPOCH_MS = Date.UTC(2020, 0, 1);
+
+/** Upper bound of the deterministic date anchor: 2030-12-31T00:00:00.000Z. */
+const ANCHOR_MAX_EPOCH_MS = Date.UTC(2030, 11, 31);
+
+/**
+ * Generate a seed-deterministic `Date` anchor without consulting the
+ * wall-clock. Used as the `refDate` argument to every `faker.date.*` call
+ * in this file so the resulting timestamps are byte-identical across
+ * same-seed invocations.
+ *
+ * @returns A `Date` in the [2020-01-01, 2030-12-31] UTC interval.
+ */
+function deterministicDateAnchor(): Date {
+  return new Date(faker.number.int({ min: ANCHOR_MIN_EPOCH_MS, max: ANCHOR_MAX_EPOCH_MS }));
+}
+
+// ---------------------------------------------------------------------------
 // Public factories
 // ---------------------------------------------------------------------------
 
@@ -457,8 +498,22 @@ export function permissionFactory(overrides: Partial<Permission> = {}): Permissi
   // recent window so the (createdAt <= updatedAt) invariant holds for the
   // vast majority of generated rows. Tests that care about strict ordering
   // override one or both fields.
-  const createdAt = faker.date.recent({ days: RECENT_DAYS_CREATED }).toISOString();
-  const updatedAt = faker.date.recent({ days: RECENT_DAYS_UPDATED }).toISOString();
+  //
+  // Determinism guarantee (per AAP §0.4.4 — "deterministic (seedable) entity
+  // instances"): every `faker.date.*` call uses an explicit `refDate` anchored
+  // to a seed-deterministic timestamp produced by `deterministicDateAnchor()`.
+  // The default `refDate: new Date()` would otherwise read the wall-clock —
+  // which changes between successive seeded invocations and produces 1ms-level
+  // drift in `createdAt` / `updatedAt`, breaking byte-identical reproducibility.
+  // QA Issue #3 reproduced this defect at ~10% rate; this anchor pattern is
+  // the contained fix that achieves 100% same-seed reproducibility.
+  const dateAnchor = deterministicDateAnchor();
+  const createdAt = faker.date
+    .recent({ days: RECENT_DAYS_CREATED, refDate: dateAnchor })
+    .toISOString();
+  const updatedAt = faker.date
+    .recent({ days: RECENT_DAYS_UPDATED, refDate: dateAnchor })
+    .toISOString();
 
   // Description: short lorem-ipsum sentence — realistic prose without
   // requiring a real corpus. Length is bounded so descriptions render
@@ -563,7 +618,15 @@ export function roleGrantFactory(overrides: Partial<RoleGrant> = {}): RoleGrant 
   // Capture grantedDate as a `Date` (rather than just the ISO string) so
   // subsequent date generators can use it as `refDate` to enforce
   // chronological invariants (`grantedAt < expiresAt`, `grantedAt < revokedAt`).
-  const grantedDate = faker.date.recent({ days: RECENT_DAYS_GRANT });
+  //
+  // Determinism guarantee (per AAP §0.4.4): the underlying lookback uses an
+  // explicit `refDate` anchored to a seed-deterministic timestamp produced
+  // by `deterministicDateAnchor()`, NOT the wall-clock. See the equivalent
+  // comment in `permissionFactory` above for the full rationale. The same
+  // anchor is reused below as the upper bound for `revokedAt` so its
+  // (grantedDate, anchor] interval is also seed-deterministic.
+  const dateAnchor = deterministicDateAnchor();
+  const grantedDate = faker.date.recent({ days: RECENT_DAYS_GRANT, refDate: dateAnchor });
   const grantedAt = grantedDate.toISOString();
 
   // Most grants have expiry (security best practice — time-bounded grants
@@ -578,12 +641,17 @@ export function roleGrantFactory(overrides: Partial<RoleGrant> = {}): RoleGrant 
     : null;
 
   // Status-conditional fields: only revoked grants carry revocation metadata.
-  // `revokedAt` falls strictly within (grantedDate, now] via faker.date.between.
-  // The `Date()` upper bound on the interval guarantees `revokedAt <= now`.
+  // `revokedAt` falls strictly within (grantedDate, dateAnchor] via
+  // faker.date.between. Using `dateAnchor` (the seed-deterministic
+  // `faker.date.anytime()` timestamp) as the upper bound — rather than
+  // `new Date()` — preserves byte-identical reproducibility across seeded
+  // invocations. The chronological invariant `grantedDate < revokedAt <= dateAnchor`
+  // continues to hold because both bounds are derived from the same seeded
+  // RNG stream.
   let revokedAt: string | null = null;
   let revokedById: string | undefined;
   if (status === 'revoked') {
-    revokedAt = faker.date.between({ from: grantedDate, to: new Date() }).toISOString();
+    revokedAt = faker.date.between({ from: grantedDate, to: dateAnchor }).toISOString();
     revokedById = faker.string.uuid();
   }
 
