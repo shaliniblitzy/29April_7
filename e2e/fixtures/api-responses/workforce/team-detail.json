@@ -1,0 +1,110 @@
+{
+  "id": "team-001",
+  "name": "Alpha Squad",
+  "description": "Core platform engineering team responsible for shared infrastructure and developer tooling. Owns the build pipeline, internal SDKs, and developer-experience tooling used across all Whoville engineering teams.",
+  "leadId": "user-jdoe",
+  "leadName": "Jane Doe",
+  "manager": "jdoe",
+  "managerName": "Jane Doe",
+  "memberCount": 8,
+  "size": 8,
+  "department": "Engineering",
+  "status": "active",
+  "createdAt": "2026-01-15T10:00:00Z",
+  "updatedAt": "2026-04-15T10:00:00Z",
+  "leadDetails": {
+    "id": "user-jdoe",
+    "displayName": "Jane Doe",
+    "email": "jane.doe@whoville.example.internal",
+    "title": "Engineering Manager",
+    "role": "Tech Lead"
+  },
+  "members": [
+    {
+      "id": "user-jdoe",
+      "displayName": "Jane Doe",
+      "email": "jane.doe@whoville.example.internal",
+      "role": "Tech Lead",
+      "title": "Engineering Manager",
+      "status": "active",
+      "joinedAt": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": "user-asmith",
+      "displayName": "Alex Smith",
+      "email": "alex.smith@whoville.example.internal",
+      "role": "Senior Engineer",
+      "title": "Senior Software Engineer II",
+      "status": "active",
+      "joinedAt": "2026-01-20T10:00:00Z"
+    },
+    {
+      "id": "user-bchen",
+      "displayName": "Brian Chen",
+      "email": "brian.chen@whoville.example.internal",
+      "role": "Senior Engineer",
+      "title": "Senior Software Engineer",
+      "status": "active",
+      "joinedAt": "2026-02-01T10:00:00Z"
+    },
+    {
+      "id": "user-dgomez",
+      "displayName": "Diana Gomez",
+      "email": "diana.gomez@whoville.example.internal",
+      "role": "Engineer",
+      "title": "Software Engineer II",
+      "status": "active",
+      "joinedAt": "2026-02-10T10:00:00Z"
+    },
+    {
+      "id": "user-ekim",
+      "displayName": "Emma Kim",
+      "email": "emma.kim@whoville.example.internal",
+      "role": "Engineer",
+      "title": "Software Engineer",
+      "status": "active",
+      "joinedAt": "2026-02-15T10:00:00Z"
+    },
+    {
+      "id": "user-fwong",
+      "displayName": "Felix Wong",
+      "email": "felix.wong@whoville.example.internal",
+      "role": "Principal Engineer",
+      "title": "Principal Software Engineer",
+      "status": "active",
+      "joinedAt": "2026-01-18T10:00:00Z"
+    },
+    {
+      "id": "user-gpark",
+      "displayName": "Grace Park",
+      "email": "grace.park@whoville.example.internal",
+      "role": "Engineer",
+      "title": "Software Engineer III",
+      "status": "active",
+      "joinedAt": "2026-03-01T10:00:00Z"
+    },
+    {
+      "id": "user-hcastillo",
+      "displayName": "Hector Castillo",
+      "email": "hector.castillo@whoville.example.internal",
+      "role": "Engineer",
+      "title": "Software Engineer II",
+      "status": "on-leave",
+      "joinedAt": "2026-02-20T10:00:00Z"
+    }
+  ],
+  "topSkills": [
+    { "id": "skl-001", "name": "TypeScript", "level": "advanced", "memberCount": 7 },
+    { "id": "skl-002", "name": "System Design", "level": "intermediate", "memberCount": 5 },
+    { "id": "skl-003", "name": "Code Review", "level": "advanced", "memberCount": 8 },
+    { "id": "skl-005", "name": "Kubernetes", "level": "intermediate", "memberCount": 4 },
+    { "id": "skl-006", "name": "CI/CD Pipelines", "level": "advanced", "memberCount": 6 }
+  ],
+  "metadata": {
+    "location": "Cincinnati, OH",
+    "costCenter": "ENG-001",
+    "timezone": "America/New_York",
+    "slack": "#alpha-squad",
+    "primaryEmail": "alpha-squad@whoville.example.internal"
+  }
+}
