@@ -1,0 +1,127 @@
+{
+  "id": "asn-001",
+  "name": "Project Phoenix Backend",
+  "description": "Lead the backend platform architecture for Project Phoenix, the next-generation customer-facing API. Includes service decomposition, observability standards, and engineering team enablement.",
+  "teamId": "team-001",
+  "teamName": "Alpha Squad",
+  "team": {
+    "id": "team-001",
+    "name": "Alpha Squad",
+    "department": "Engineering",
+    "leadId": "user-jdoe",
+    "leadName": "Jane Doe"
+  },
+  "assigneeUserId": "user-jdoe",
+  "assigneeName": "Jane Doe",
+  "assignee": {
+    "id": "user-jdoe",
+    "displayName": "Jane Doe",
+    "email": "jane.doe@whoville.example.internal",
+    "title": "Engineering Manager",
+    "role": "Tech Lead"
+  },
+  "employeeId": "jdoe",
+  "employeeName": "Jane Doe",
+  "employee": {
+    "id": "user-jdoe",
+    "displayName": "Jane Doe",
+    "email": "jane.doe@whoville.example.internal",
+    "title": "Engineering Manager",
+    "role": "Tech Lead"
+  },
+  "role": "Tech Lead",
+  "responsibility": "Lead architectural design, run code review, and coordinate cross-team integration for the Phoenix backend.",
+  "startDate": "2026-01-15",
+  "endDate": null,
+  "status": "active",
+  "priority": "high",
+  "requiredCompetencyIds": ["skl-001", "skl-002"],
+  "requiredCompetencies": [
+    {
+      "id": "skl-001",
+      "name": "TypeScript",
+      "level": "advanced",
+      "mandatory": true
+    },
+    {
+      "id": "skl-002",
+      "name": "System Design",
+      "level": "advanced",
+      "mandatory": true
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ms-001",
+      "name": "Architecture Decision Record approved",
+      "dueDate": "2026-02-15",
+      "status": "completed",
+      "completedAt": "2026-02-10T16:30:00Z"
+    },
+    {
+      "id": "ms-002",
+      "name": "Service decomposition prototype",
+      "dueDate": "2026-03-31",
+      "status": "completed",
+      "completedAt": "2026-03-28T11:00:00Z"
+    },
+    {
+      "id": "ms-003",
+      "name": "Observability standards rollout",
+      "dueDate": "2026-05-31",
+      "status": "in-progress"
+    },
+    {
+      "id": "ms-004",
+      "name": "Production migration plan",
+      "dueDate": "2026-07-15",
+      "status": "pending"
+    }
+  ],
+  "history": [
+    {
+      "id": "h-001",
+      "eventType": "created",
+      "eventAt": "2026-01-10T10:00:00Z",
+      "actor": "user-jdoe",
+      "actorName": "Jane Doe",
+      "summary": "Assignment created."
+    },
+    {
+      "id": "h-002",
+      "eventType": "status-change",
+      "eventAt": "2026-01-15T09:00:00Z",
+      "actor": "user-jdoe",
+      "actorName": "Jane Doe",
+      "summary": "Status changed from pending to active."
+    },
+    {
+      "id": "h-003",
+      "eventType": "milestone-completed",
+      "eventAt": "2026-02-10T16:30:00Z",
+      "actor": "user-jdoe",
+      "actorName": "Jane Doe",
+      "summary": "Milestone 'Architecture Decision Record approved' completed."
+    },
+    {
+      "id": "h-004",
+      "eventType": "milestone-completed",
+      "eventAt": "2026-03-28T11:00:00Z",
+      "actor": "user-jdoe",
+      "actorName": "Jane Doe",
+      "summary": "Milestone 'Service decomposition prototype' completed."
+    },
+    {
+      "id": "h-005",
+      "eventType": "comment",
+      "eventAt": "2026-04-15T10:00:00Z",
+      "actor": "user-fwong",
+      "actorName": "Felix Wong",
+      "summary": "Reviewed Phoenix observability rollout plan; approved."
+    }
+  ],
+  "createdAt": "2026-01-10T10:00:00Z",
+  "updatedAt": "2026-04-15T10:00:00Z",
+  "createdBy": "user-jdoe",
+  "createdByName": "Jane Doe"
+}
