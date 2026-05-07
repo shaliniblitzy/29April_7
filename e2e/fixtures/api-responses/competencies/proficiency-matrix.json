@@ -1,0 +1,387 @@
+{
+  "generatedAt": "2026-05-01T00:00:00Z",
+  "asOfDate": "2026-05-01",
+  "totalEmployees": 247,
+  "proficiencyLevels": [
+    {
+      "level": 1,
+      "name": "Novice",
+      "code": "NOV",
+      "description": "Just learning the skill; requires close supervision.",
+      "genericBehaviors": [
+        "Follows step-by-step guidance.",
+        "Asks frequent clarifying questions.",
+        "Cannot complete tasks independently."
+      ]
+    },
+    {
+      "level": 2,
+      "name": "Practitioner",
+      "code": "PRAC",
+      "description": "Can apply the skill on routine work with occasional guidance.",
+      "genericBehaviors": [
+        "Completes routine tasks independently.",
+        "Recognizes when to ask for help.",
+        "Follows established patterns."
+      ]
+    },
+    {
+      "level": 3,
+      "name": "Proficient",
+      "code": "PROF",
+      "description": "Applies the skill confidently across most work; the team baseline.",
+      "genericBehaviors": [
+        "Handles complex tasks independently.",
+        "Adapts patterns to new situations.",
+        "Reviews routine work of others."
+      ]
+    },
+    {
+      "level": 4,
+      "name": "Advanced",
+      "code": "ADV",
+      "description": "Sets standards; coaches others; handles ambiguous problems.",
+      "genericBehaviors": [
+        "Defines patterns and standards.",
+        "Coaches and mentors team members.",
+        "Resolves ambiguous and novel problems."
+      ]
+    },
+    {
+      "level": 5,
+      "name": "Expert",
+      "code": "EXP",
+      "description": "Recognized authority; influences industry or company-wide direction.",
+      "genericBehaviors": [
+        "Influences industry or company strategy.",
+        "Mentors mentors and coaches coaches.",
+        "Recognized externally as a subject-matter authority."
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-001",
+      "name": "Engineering",
+      "skills": [
+        {
+          "id": "skl-001",
+          "name": "TypeScript",
+          "requiredLevel": 3,
+          "averageLevel": 3.4,
+          "employeeCount": 42,
+          "distribution": {
+            "level1": 2,
+            "level2": 5,
+            "level3": 16,
+            "level4": 14,
+            "level5": 5
+          },
+          "levelDescriptions": {
+            "1": "Familiar with syntax; can read TypeScript code.",
+            "2": "Writes simple TypeScript with basic types and interfaces.",
+            "3": "Comfortable with generics, mapped types, and conditional types.",
+            "4": "Designs type-safe APIs and tooling; reviews complex type code.",
+            "5": "Contributes to TypeScript ecosystem (libraries, type definitions, RFCs)."
+          },
+          "exampleBehaviors": {
+            "1": ["Reads TypeScript files in code review with help."],
+            "2": ["Adds type annotations to existing JavaScript modules."],
+            "3": ["Refactors a module to use discriminated unions."],
+            "4": ["Designs a generic type-safe API client used across teams."],
+            "5": ["Authors a TypeScript ESLint rule used company-wide."]
+          },
+          "gap": "above_target"
+        },
+        {
+          "id": "skl-002",
+          "name": "System Design",
+          "requiredLevel": 4,
+          "averageLevel": 3.1,
+          "employeeCount": 42,
+          "distribution": {
+            "level1": 4,
+            "level2": 8,
+            "level3": 14,
+            "level4": 12,
+            "level5": 4
+          },
+          "levelDescriptions": {
+            "1": "Reads system design docs; understands diagrams.",
+            "2": "Designs single-component features with guidance.",
+            "3": "Designs multi-component systems within a team scope.",
+            "4": "Designs cross-team systems considering reliability, scale, and cost.",
+            "5": "Defines architecture vision spanning the platform; mentors architects."
+          },
+          "exampleBehaviors": {
+            "1": ["Reviews ADRs and asks clarifying questions."],
+            "2": ["Drafts a design doc for a new endpoint."],
+            "3": ["Owns the design for a service-level rewrite."],
+            "4": ["Leads cross-team architecture review for a quarterly initiative."],
+            "5": ["Defines the platform's three-year architecture roadmap."]
+          },
+          "gap": "below_target"
+        },
+        {
+          "id": "skl-003",
+          "name": "Code Review",
+          "requiredLevel": 3,
+          "averageLevel": 3.6,
+          "employeeCount": 42,
+          "distribution": {
+            "level1": 0,
+            "level2": 4,
+            "level3": 14,
+            "level4": 17,
+            "level5": 7
+          },
+          "levelDescriptions": {
+            "1": "Has not yet conducted a code review.",
+            "2": "Reviews routine PRs; catches obvious issues.",
+            "3": "Catches subtle issues; gives constructive feedback consistently.",
+            "4": "Reviews complex PRs; teaches reviewers; sets review standards.",
+            "5": "Designs the code-review program for the company."
+          },
+          "exampleBehaviors": {
+            "1": ["Observes review process during onboarding."],
+            "2": ["Approves PRs after suggesting style improvements."],
+            "3": ["Identifies design and security issues before merge."],
+            "4": ["Authors the team's code-review checklist."],
+            "5": ["Defines company-wide review standards and tooling."]
+          },
+          "gap": "above_target"
+        },
+        {
+          "id": "skl-005",
+          "name": "Kubernetes",
+          "requiredLevel": 3,
+          "averageLevel": 2.4,
+          "employeeCount": 18,
+          "distribution": {
+            "level1": 4,
+            "level2": 6,
+            "level3": 5,
+            "level4": 2,
+            "level5": 1
+          },
+          "levelDescriptions": {
+            "1": "Reads Kubernetes manifests; understands Pod and Service concepts.",
+            "2": "Deploys applications using Helm or kustomize with guidance.",
+            "3": "Diagnoses production issues; configures HPA, PDB, and resource quotas.",
+            "4": "Designs cluster topology; manages multi-cluster operations.",
+            "5": "Contributes to Kubernetes upstream; defines org-wide cluster standards."
+          },
+          "exampleBehaviors": {
+            "1": ["Reads pod logs via kubectl."],
+            "2": ["Deploys a feature service using the team's Helm chart."],
+            "3": ["Resolves a production OOMKilled incident; tunes resource limits."],
+            "4": ["Designs the multi-region cluster failover plan."],
+            "5": ["Authors a CNCF KEP for a feature adopted upstream."]
+          },
+          "gap": "well_below_target"
+        },
+        {
+          "id": "skl-006",
+          "name": "CI/CD Pipelines",
+          "requiredLevel": 3,
+          "averageLevel": 3.0,
+          "employeeCount": 28,
+          "distribution": {
+            "level1": 1,
+            "level2": 6,
+            "level3": 14,
+            "level4": 6,
+            "level5": 1
+          },
+          "levelDescriptions": {
+            "1": "Reads pipeline YAML; understands build steps.",
+            "2": "Modifies pipeline scripts to add a step or job.",
+            "3": "Designs end-to-end pipelines for a service; tunes performance.",
+            "4": "Designs cross-team pipeline standards; manages pipeline platform.",
+            "5": "Defines org-wide CI/CD architecture; mentors pipeline platform engineers."
+          },
+          "exampleBehaviors": {
+            "1": ["Triggers and observes pipeline runs."],
+            "2": ["Adds a new lint step to the team's pipeline."],
+            "3": ["Designs the deploy-on-merge pipeline for the platform service."],
+            "4": ["Owns the company's GitHub Actions composite-actions library."],
+            "5": ["Architects the company's monorepo build orchestration."]
+          },
+          "gap": "at_target"
+        }
+      ]
+    },
+    {
+      "id": "cat-002",
+      "name": "Leadership",
+      "skills": [
+        {
+          "id": "skl-004",
+          "name": "Stakeholder Management",
+          "requiredLevel": 3,
+          "averageLevel": 2.9,
+          "employeeCount": 18,
+          "distribution": {
+            "level1": 1,
+            "level2": 5,
+            "level3": 8,
+            "level4": 3,
+            "level5": 1
+          },
+          "levelDescriptions": {
+            "1": "Identifies stakeholders for a project.",
+            "2": "Communicates routine project updates clearly.",
+            "3": "Facilitates productive discussions; manages competing priorities.",
+            "4": "Influences senior leaders; aligns cross-functional groups.",
+            "5": "Sets enterprise-level stakeholder strategy; coaches managers."
+          },
+          "exampleBehaviors": {
+            "1": ["Lists project stakeholders in a kickoff doc."],
+            "2": ["Sends weekly status updates to the team."],
+            "3": ["Facilitates a roadmap review with conflicting team needs."],
+            "4": ["Aligns three VP-level stakeholders on a quarterly initiative."],
+            "5": ["Defines the company's stakeholder-engagement framework."]
+          },
+          "gap": "below_target"
+        },
+        {
+          "id": "skl-009",
+          "name": "Mentoring",
+          "requiredLevel": 3,
+          "averageLevel": 3.2,
+          "employeeCount": 22,
+          "distribution": {
+            "level1": 1,
+            "level2": 4,
+            "level3": 9,
+            "level4": 6,
+            "level5": 2
+          },
+          "levelDescriptions": {
+            "1": "Has not yet mentored another engineer.",
+            "2": "Mentors a single junior engineer through one project cycle.",
+            "3": "Mentors multiple engineers; gives consistent feedback.",
+            "4": "Coaches other mentors; designs onboarding programs.",
+            "5": "Sets mentoring strategy company-wide; coaches senior coaches."
+          },
+          "exampleBehaviors": {
+            "1": ["Pairs with a peer during code review."],
+            "2": ["Onboards a new hire on the team."],
+            "3": ["Mentors three engineers across a year; gives quarterly feedback."],
+            "4": ["Designs the team's apprenticeship program."],
+            "5": ["Speaks at industry events on engineering mentorship."]
+          },
+          "gap": "above_target"
+        }
+      ]
+    },
+    {
+      "id": "cat-003",
+      "name": "Communication",
+      "skills": [
+        {
+          "id": "skl-007",
+          "name": "Cross-Functional Collaboration",
+          "requiredLevel": 3,
+          "averageLevel": 3.1,
+          "employeeCount": 38,
+          "distribution": {
+            "level1": 2,
+            "level2": 8,
+            "level3": 16,
+            "level4": 9,
+            "level5": 3
+          },
+          "levelDescriptions": {
+            "1": "Participates in cross-team meetings.",
+            "2": "Coordinates with one other team for a feature.",
+            "3": "Drives cross-team initiatives; resolves conflicts directly.",
+            "4": "Leads cross-org programs; influences functional partners.",
+            "5": "Defines the company's cross-functional engagement playbook."
+          },
+          "exampleBehaviors": {
+            "1": ["Attends standup with a partner team."],
+            "2": ["Coordinates a feature spanning eng + design."],
+            "3": ["Drives a cross-team initiative across 4 squads."],
+            "4": ["Leads an enterprise program with eng, product, ops, and CX."],
+            "5": ["Defines how the company runs cross-functional initiatives."]
+          },
+          "gap": "at_target"
+        }
+      ]
+    },
+    {
+      "id": "cat-004",
+      "name": "Domain Knowledge",
+      "skills": [
+        {
+          "id": "skl-008",
+          "name": "Incident Response",
+          "requiredLevel": 3,
+          "averageLevel": 2.5,
+          "employeeCount": 12,
+          "distribution": {
+            "level1": 2,
+            "level2": 4,
+            "level3": 4,
+            "level4": 1,
+            "level5": 1
+          },
+          "levelDescriptions": {
+            "1": "Reads runbooks; understands the on-call process.",
+            "2": "Handles routine alerts with runbook guidance.",
+            "3": "Acts as primary on-call; runs incidents; writes RCAs.",
+            "4": "Acts as Incident Commander; coaches IC trainees.",
+            "5": "Defines the company's incident-response program."
+          },
+          "exampleBehaviors": {
+            "1": ["Shadows an on-call engineer."],
+            "2": ["Resolves a P3 alert using the runbook."],
+            "3": ["Leads response to a P1 incident; writes the postmortem."],
+            "4": ["Trains new ICs; runs incident game days."],
+            "5": ["Authors the company's IR playbook and SEV taxonomy."]
+          },
+          "gap": "below_target"
+        },
+        {
+          "id": "skl-010",
+          "name": "Domain Architecture",
+          "requiredLevel": 4,
+          "averageLevel": 3.0,
+          "employeeCount": 8,
+          "distribution": {
+            "level1": 1,
+            "level2": 1,
+            "level3": 4,
+            "level4": 1,
+            "level5": 1
+          },
+          "levelDescriptions": {
+            "1": "Reads domain models; recognizes bounded contexts.",
+            "2": "Implements features within an existing domain model.",
+            "3": "Designs domain models for a new bounded context.",
+            "4": "Designs cross-domain integration; resolves model conflicts.",
+            "5": "Defines the enterprise domain architecture."
+          },
+          "exampleBehaviors": {
+            "1": ["Reads the team's domain glossary."],
+            "2": ["Implements a feature using the existing aggregate root."],
+            "3": ["Designs a new bounded context for a quarterly initiative."],
+            "4": ["Mediates a cross-domain conflict between two teams."],
+            "5": ["Defines the enterprise's bounded-context map."]
+          },
+          "gap": "below_target"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "skillCount": 10,
+    "categoryCount": 4,
+    "averageProficiency": 3.1,
+    "skillsAboveTarget": 3,
+    "skillsAtTarget": 2,
+    "skillsBelowTarget": 4,
+    "skillsWellBelowTarget": 1
+  }
+}
