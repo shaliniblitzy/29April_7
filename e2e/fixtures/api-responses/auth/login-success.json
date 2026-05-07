@@ -1,0 +1,27 @@
+{
+  "token": "mock-jwt-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e-canonical-user-do-not-use-in-prod.signature-mock",
+  "refreshToken": "mock-refresh-token-e2e-canonical-user-do-not-use-in-prod",
+  "tokenType": "Bearer",
+  "expiresIn": 3600,
+  "issuedAt": "2026-05-01T12:00:00.000Z",
+  "expiresAt": "2026-05-01T13:00:00.000Z",
+  "user": {
+    "id": "e2e-canonical-user-001",
+    "username": "e2e-test-canonical-user",
+    "email": "e2e-test-canonical-user@whoville.example.internal",
+    "displayName": "E2E Canonical User",
+    "firstName": "E2E",
+    "lastName": "CanonicalUser",
+    "department": "Engineering",
+    "roles": ["manager"],
+    "permissions": [
+      "workforce.read",
+      "workforce.write",
+      "assessments.read",
+      "assessments.write",
+      "competencies.read",
+      "competencies.write",
+      "authorization.read"
+    ]
+  }
+}
