@@ -1,0 +1,6 @@
+# This directory holds Playwright storageState JSON files generated at test
+# start by e2e/global-setup.ts.
+#
+# The *.json files in this directory are gitignored (see /.gitignore) because
+# they may contain valid auth tokens. This .gitkeep file exists only so the
+# directory is preserved in version control.
