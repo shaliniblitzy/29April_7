@@ -1,0 +1,447 @@
+{
+  "data": [
+    {
+      "id": "rsp-001",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-jdoe",
+      "responderId": "jdoe",
+      "respondentName": "Jane Doe",
+      "subjectId": "user-jdoe",
+      "subjectName": "Jane Doe",
+      "status": "in-progress",
+      "scores": [
+        {
+          "competencyId": "skl-001",
+          "competencyName": "TypeScript",
+          "score": 4,
+          "comment": "Led the rollout of strict mode across the platform monorepo."
+        },
+        {
+          "competencyId": "skl-002",
+          "competencyName": "System Design",
+          "score": 4,
+          "comment": "Authored the Phoenix backend ADRs."
+        }
+      ],
+      "overallComment": null,
+      "aggregatedScore": null,
+      "completionRate": 0.5,
+      "submittedAt": null,
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-20T10:00:00Z"
+    },
+    {
+      "id": "rsp-002",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-asmith",
+      "responderId": "asmith",
+      "respondentName": "Alex Smith",
+      "subjectId": "user-asmith",
+      "subjectName": "Alex Smith",
+      "status": "submitted",
+      "scores": [
+        {
+          "competencyId": "skl-001",
+          "competencyName": "TypeScript",
+          "score": 4,
+          "comment": "Comfortable with generics; mentored junior devs through type-safe API design."
+        },
+        {
+          "competencyId": "skl-002",
+          "competencyName": "System Design",
+          "score": 3,
+          "comment": "Designed the public-web rewrite at the team-scope level."
+        },
+        {
+          "competencyId": "skl-003",
+          "competencyName": "Code Review",
+          "score": 4,
+          "comment": "Recognized for thorough, constructive review feedback."
+        },
+        {
+          "competencyId": "skl-007",
+          "competencyName": "Cross-Functional Collaboration",
+          "score": 3,
+          "comment": "Coordinated successfully across eng + design for the public web refresh."
+        }
+      ],
+      "overallComment": "Strong cycle. Continued growth in system design will support promotion next cycle.",
+      "aggregatedScore": 3.5,
+      "completionRate": 1.0,
+      "submittedAt": "2026-04-25T15:30:00Z",
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-25T15:30:00Z"
+    },
+    {
+      "id": "rsp-003",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-bchen",
+      "responderId": "bchen",
+      "respondentName": "Brian Chen",
+      "subjectId": "user-bchen",
+      "subjectName": "Brian Chen",
+      "status": "in-progress",
+      "scores": [
+        {
+          "competencyId": "skl-001",
+          "competencyName": "TypeScript",
+          "score": 3,
+          "comment": null
+        }
+      ],
+      "overallComment": null,
+      "aggregatedScore": null,
+      "completionRate": 0.3,
+      "submittedAt": null,
+      "reviewedAt": null,
+      "createdAt": "2026-04-08T10:00:00Z",
+      "updatedAt": "2026-04-18T11:15:00Z"
+    },
+    {
+      "id": "rsp-004",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-ekim",
+      "responderId": "ekim",
+      "respondentName": "Emma Kim",
+      "subjectId": "user-ekim",
+      "subjectName": "Emma Kim",
+      "status": "submitted",
+      "scores": [
+        {
+          "competencyId": "skl-001",
+          "competencyName": "TypeScript",
+          "score": 3,
+          "comment": "Solidified core TypeScript skills; ready for advanced patterns."
+        },
+        {
+          "competencyId": "skl-002",
+          "competencyName": "System Design",
+          "score": 2,
+          "comment": "Comfortable with single-component design; growing into multi-component scope."
+        },
+        {
+          "competencyId": "skl-003",
+          "competencyName": "Code Review",
+          "score": 3,
+          "comment": "Reviews routine PRs effectively."
+        },
+        {
+          "competencyId": "skl-007",
+          "competencyName": "Cross-Functional Collaboration",
+          "score": 3,
+          "comment": "Ramped up cross-team collaboration during the API redesign."
+        }
+      ],
+      "overallComment": "Solid first-year cycle. Next cycle should focus on system-design growth.",
+      "aggregatedScore": 2.75,
+      "completionRate": 1.0,
+      "submittedAt": "2026-04-22T09:45:00Z",
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-22T09:45:00Z"
+    },
+    {
+      "id": "rsp-005",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-fwong",
+      "responderId": "fwong",
+      "respondentName": "Felix Wong",
+      "subjectId": "user-fwong",
+      "subjectName": "Felix Wong",
+      "status": "reviewed",
+      "scores": [
+        {
+          "competencyId": "skl-001",
+          "competencyName": "TypeScript",
+          "score": 5,
+          "comment": "Authored the company TypeScript style guide and the lint rules used across the platform."
+        },
+        {
+          "competencyId": "skl-002",
+          "competencyName": "System Design",
+          "score": 5,
+          "comment": "Defined cross-team architecture for the FY2026 platform initiative."
+        },
+        {
+          "competencyId": "skl-003",
+          "competencyName": "Code Review",
+          "score": 4,
+          "comment": "Reviews complex PRs; teaches reviewers."
+        },
+        {
+          "competencyId": "skl-009",
+          "competencyName": "Mentoring",
+          "score": 4,
+          "comment": "Designed the Alpha Squad apprenticeship program."
+        }
+      ],
+      "overallComment": "Outstanding cycle with platform-wide impact. Promotion to Distinguished Engineer track recommended.",
+      "aggregatedScore": 4.5,
+      "completionRate": 1.0,
+      "submittedAt": "2026-04-23T10:00:00Z",
+      "reviewedAt": "2026-04-26T16:00:00Z",
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-26T16:00:00Z"
+    },
+    {
+      "id": "rsp-006",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-mlee",
+      "responderId": "mlee",
+      "respondentName": "Michelle Lee",
+      "subjectId": "user-mlee",
+      "subjectName": "Michelle Lee",
+      "status": "in-progress",
+      "scores": [
+        {
+          "competencyId": "skl-005",
+          "competencyName": "Kubernetes",
+          "score": 4,
+          "comment": "Designed the multi-region cluster failover plan."
+        },
+        {
+          "competencyId": "skl-008",
+          "competencyName": "Incident Response",
+          "score": 4,
+          "comment": "Acted as Incident Commander during the FY2026 Q1 SEV-2 outage."
+        }
+      ],
+      "overallComment": null,
+      "aggregatedScore": null,
+      "completionRate": 0.6,
+      "submittedAt": null,
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-21T14:20:00Z"
+    },
+    {
+      "id": "rsp-007",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-spatel",
+      "responderId": "spatel",
+      "respondentName": "Sara Patel",
+      "subjectId": "user-spatel",
+      "subjectName": "Sara Patel",
+      "status": "submitted",
+      "scores": [
+        {
+          "competencyId": "skl-004",
+          "competencyName": "Stakeholder Management",
+          "score": 5,
+          "comment": "Aligned three VP stakeholders on the Customer Health initiative."
+        },
+        {
+          "competencyId": "skl-007",
+          "competencyName": "Cross-Functional Collaboration",
+          "score": 5,
+          "comment": "Led the company-wide cross-functional Customer Onboarding program."
+        },
+        {
+          "competencyId": "skl-009",
+          "competencyName": "Mentoring",
+          "score": 4,
+          "comment": "Mentored 4 customer-success engineers through career-development cycles."
+        }
+      ],
+      "overallComment": "Exceptional cycle. Ready for next-level scope expansion.",
+      "aggregatedScore": 4.67,
+      "completionRate": 1.0,
+      "submittedAt": "2026-04-23T10:30:00Z",
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-23T10:30:00Z"
+    },
+    {
+      "id": "rsp-008",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-rking",
+      "responderId": "rking",
+      "respondentName": "Rob King",
+      "subjectId": "user-rking",
+      "subjectName": "Rob King",
+      "status": "in-progress",
+      "scores": [
+        {
+          "competencyId": "skl-007",
+          "competencyName": "Cross-Functional Collaboration",
+          "score": 4,
+          "comment": "Drove cross-team analytics initiatives across product and engineering."
+        }
+      ],
+      "overallComment": null,
+      "aggregatedScore": null,
+      "completionRate": 0.4,
+      "submittedAt": null,
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-19T13:45:00Z"
+    },
+    {
+      "id": "rsp-009",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-thill",
+      "responderId": "thill",
+      "respondentName": "Taylor Hill",
+      "subjectId": "user-thill",
+      "subjectName": "Taylor Hill",
+      "status": "finalized",
+      "scores": [
+        {
+          "competencyId": "skl-004",
+          "competencyName": "Stakeholder Management",
+          "score": 4,
+          "comment": "Drove the company-wide process improvement initiative."
+        },
+        {
+          "competencyId": "skl-007",
+          "competencyName": "Cross-Functional Collaboration",
+          "score": 4,
+          "comment": "Coordinated effectively across eng, product, and ops."
+        }
+      ],
+      "overallComment": "Strong delivery cycle. Calibration confirms exceeded-expectations rating.",
+      "aggregatedScore": 4.0,
+      "completionRate": 1.0,
+      "submittedAt": "2026-04-26T11:00:00Z",
+      "reviewedAt": "2026-04-28T11:00:00Z",
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-28T11:00:00Z"
+    },
+    {
+      "id": "rsp-010",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-bjones",
+      "responderId": "bjones",
+      "respondentName": "Brett Jones",
+      "subjectId": "user-bjones",
+      "subjectName": "Brett Jones",
+      "status": "submitted",
+      "scores": [
+        {
+          "competencyId": "skl-002",
+          "competencyName": "System Design",
+          "score": 5,
+          "comment": "Designed the FY2026 service migration cross-team architecture."
+        },
+        {
+          "competencyId": "skl-005",
+          "competencyName": "Kubernetes",
+          "score": 4,
+          "comment": "Owned the multi-cluster operations program."
+        },
+        {
+          "competencyId": "skl-006",
+          "competencyName": "CI/CD Pipelines",
+          "score": 4,
+          "comment": "Designed the cross-team pipeline standards."
+        }
+      ],
+      "overallComment": "Strong principal-level cycle. Continued investment in mentoring will support next-level scope.",
+      "aggregatedScore": 4.33,
+      "completionRate": 1.0,
+      "submittedAt": "2026-04-24T15:00:00Z",
+      "reviewedAt": null,
+      "createdAt": "2026-04-05T10:00:00Z",
+      "updatedAt": "2026-04-24T15:00:00Z"
+    },
+    {
+      "id": "rsp-011",
+      "cycleId": "cyc-002",
+      "cycleName": "2026 Q1 Check-in",
+      "templateId": "tmpl-002",
+      "templateName": "Quarterly Check-in",
+      "assessmentId": "cyc-002",
+      "respondentId": "user-jdoe",
+      "responderId": "jdoe",
+      "respondentName": "Jane Doe",
+      "subjectId": "user-jdoe",
+      "subjectName": "Jane Doe",
+      "status": "submitted",
+      "scores": [
+        {
+          "competencyId": "skl-002",
+          "competencyName": "System Design",
+          "score": 4,
+          "comment": "Q1 progress on Phoenix backend architecture."
+        }
+      ],
+      "overallComment": "Q1 check-in complete. On track for annual goals.",
+      "aggregatedScore": 4.0,
+      "completionRate": 1.0,
+      "submittedAt": "2026-03-28T14:00:00Z",
+      "reviewedAt": null,
+      "createdAt": "2026-03-15T10:00:00Z",
+      "updatedAt": "2026-03-28T14:00:00Z"
+    },
+    {
+      "id": "rsp-012",
+      "cycleId": "cyc-001",
+      "cycleName": "2026 Annual Review",
+      "templateId": "tmpl-001",
+      "templateName": "Annual Performance Review",
+      "assessmentId": "cyc-001",
+      "respondentId": "user-cnewton",
+      "responderId": "cnewton",
+      "respondentName": "Chris Newton",
+      "subjectId": "user-cnewton",
+      "subjectName": "Chris Newton",
+      "status": "draft",
+      "scores": [],
+      "overallComment": null,
+      "aggregatedScore": null,
+      "completionRate": 0,
+      "submittedAt": null,
+      "reviewedAt": null,
+      "createdAt": "2026-04-26T08:00:00Z",
+      "updatedAt": "2026-04-26T08:00:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "size": 20,
+    "total": 12,
+    "totalPages": 1
+  }
+}
