@@ -1,0 +1,300 @@
+{
+  "id": "cyc-001",
+  "name": "2026 Annual Review",
+  "description": "Company-wide annual performance review cycle for fiscal year 2026. All full-time employees with at least 90 days of tenure participate. The cycle includes self-assessment, peer feedback, manager review, and calibration phases. Calibration is run by the People Operations team in May 2026.",
+  "templateId": "tmpl-001",
+  "templateName": "Annual Performance Review",
+  "templateVersion": "v3",
+  "status": "active",
+  "startsAt": "2026-04-01T00:00:00Z",
+  "endsAt": "2026-05-31T23:59:59Z",
+  "participantCount": 247,
+  "responseCount": 89,
+  "completionRate": 0.36,
+  "ownerId": "user-spatel",
+  "ownerName": "Sara Patel",
+  "phases": [
+    {
+      "id": "phase-001",
+      "name": "Self-Assessment",
+      "order": 1,
+      "status": "in-progress",
+      "startsAt": "2026-04-01T00:00:00Z",
+      "endsAt": "2026-04-15T23:59:59Z",
+      "completionRate": 0.85
+    },
+    {
+      "id": "phase-002",
+      "name": "Peer Feedback",
+      "order": 2,
+      "status": "in-progress",
+      "startsAt": "2026-04-10T00:00:00Z",
+      "endsAt": "2026-04-30T23:59:59Z",
+      "completionRate": 0.45
+    },
+    {
+      "id": "phase-003",
+      "name": "Manager Review",
+      "order": 3,
+      "status": "pending",
+      "startsAt": "2026-05-01T00:00:00Z",
+      "endsAt": "2026-05-20T23:59:59Z",
+      "completionRate": 0
+    },
+    {
+      "id": "phase-004",
+      "name": "Calibration",
+      "order": 4,
+      "status": "pending",
+      "startsAt": "2026-05-21T00:00:00Z",
+      "endsAt": "2026-05-31T23:59:59Z",
+      "completionRate": 0
+    }
+  ],
+  "progress": {
+    "byStatus": {
+      "not-started": 32,
+      "in-progress": 126,
+      "submitted": 67,
+      "reviewed": 18,
+      "finalized": 4
+    },
+    "byPhase": {
+      "self-assessment": 210,
+      "peer-feedback": 111,
+      "manager-review": 0,
+      "calibration": 0
+    },
+    "byDepartment": {
+      "Engineering": 132,
+      "Customer Success": 58,
+      "Operations": 38,
+      "Product": 19
+    }
+  },
+  "participants": [
+    {
+      "id": "par-001",
+      "userId": "user-jdoe",
+      "displayName": "Jane Doe",
+      "email": "jane.doe@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-001",
+      "teamName": "Alpha Squad",
+      "status": "in-progress",
+      "responseId": "rsp-001",
+      "completionRate": 0.5,
+      "lastActivityAt": "2026-04-20T10:00:00Z"
+    },
+    {
+      "id": "par-002",
+      "userId": "user-asmith",
+      "displayName": "Alex Smith",
+      "email": "alex.smith@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-001",
+      "teamName": "Alpha Squad",
+      "status": "submitted",
+      "responseId": "rsp-002",
+      "completionRate": 1.0,
+      "lastActivityAt": "2026-04-25T15:30:00Z"
+    },
+    {
+      "id": "par-003",
+      "userId": "user-bchen",
+      "displayName": "Brian Chen",
+      "email": "brian.chen@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-001",
+      "teamName": "Alpha Squad",
+      "status": "in-progress",
+      "responseId": "rsp-003",
+      "completionRate": 0.3,
+      "lastActivityAt": "2026-04-18T11:15:00Z"
+    },
+    {
+      "id": "par-004",
+      "userId": "user-dgomez",
+      "displayName": "Diana Gomez",
+      "email": "diana.gomez@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-001",
+      "teamName": "Alpha Squad",
+      "status": "not-started",
+      "responseId": null,
+      "completionRate": 0,
+      "lastActivityAt": null
+    },
+    {
+      "id": "par-005",
+      "userId": "user-ekim",
+      "displayName": "Emma Kim",
+      "email": "emma.kim@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-001",
+      "teamName": "Alpha Squad",
+      "status": "submitted",
+      "responseId": "rsp-004",
+      "completionRate": 1.0,
+      "lastActivityAt": "2026-04-22T09:45:00Z"
+    },
+    {
+      "id": "par-006",
+      "userId": "user-fwong",
+      "displayName": "Felix Wong",
+      "email": "felix.wong@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-001",
+      "teamName": "Alpha Squad",
+      "status": "reviewed",
+      "responseId": "rsp-005",
+      "completionRate": 1.0,
+      "lastActivityAt": "2026-04-26T16:00:00Z"
+    },
+    {
+      "id": "par-007",
+      "userId": "user-mlee",
+      "displayName": "Michelle Lee",
+      "email": "michelle.lee@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-004",
+      "teamName": "Site Reliability",
+      "status": "in-progress",
+      "responseId": "rsp-006",
+      "completionRate": 0.6,
+      "lastActivityAt": "2026-04-21T14:20:00Z"
+    },
+    {
+      "id": "par-008",
+      "userId": "user-spatel",
+      "displayName": "Sara Patel",
+      "email": "sara.patel@whoville.example.internal",
+      "department": "Customer Success",
+      "teamId": "team-005",
+      "teamName": "Customer Success",
+      "status": "submitted",
+      "responseId": "rsp-007",
+      "completionRate": 1.0,
+      "lastActivityAt": "2026-04-23T10:30:00Z"
+    },
+    {
+      "id": "par-009",
+      "userId": "user-rking",
+      "displayName": "Rob King",
+      "email": "rob.king@whoville.example.internal",
+      "department": "Product",
+      "teamId": "team-006",
+      "teamName": "Product Analytics",
+      "status": "in-progress",
+      "responseId": "rsp-008",
+      "completionRate": 0.4,
+      "lastActivityAt": "2026-04-19T13:45:00Z"
+    },
+    {
+      "id": "par-010",
+      "userId": "user-thill",
+      "displayName": "Taylor Hill",
+      "email": "taylor.hill@whoville.example.internal",
+      "department": "Operations",
+      "teamId": "team-007",
+      "teamName": "Operations Excellence",
+      "status": "finalized",
+      "responseId": "rsp-009",
+      "completionRate": 1.0,
+      "lastActivityAt": "2026-04-28T11:00:00Z"
+    },
+    {
+      "id": "par-011",
+      "userId": "user-bjones",
+      "displayName": "Brett Jones",
+      "email": "brett.jones@whoville.example.internal",
+      "department": "Engineering",
+      "teamId": "team-003",
+      "teamName": "Engineering Platform",
+      "status": "submitted",
+      "responseId": "rsp-010",
+      "completionRate": 1.0,
+      "lastActivityAt": "2026-04-24T15:00:00Z"
+    },
+    {
+      "id": "par-012",
+      "userId": "user-cnewton",
+      "displayName": "Chris Newton",
+      "email": "chris.newton@whoville.example.internal",
+      "department": "Operations",
+      "teamId": "team-007",
+      "teamName": "Operations Excellence",
+      "status": "not-started",
+      "responseId": null,
+      "completionRate": 0,
+      "lastActivityAt": null
+    }
+  ],
+  "history": [
+    {
+      "id": "evt-001",
+      "eventType": "created",
+      "eventAt": "2026-03-15T10:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Cycle created from template Annual Performance Review v3."
+    },
+    {
+      "id": "evt-002",
+      "eventType": "participants-enrolled",
+      "eventAt": "2026-03-22T09:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "247 participants enrolled across all departments."
+    },
+    {
+      "id": "evt-003",
+      "eventType": "launched",
+      "eventAt": "2026-04-01T00:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Cycle launched. Self-assessment phase opened."
+    },
+    {
+      "id": "evt-004",
+      "eventType": "phase-advanced",
+      "eventAt": "2026-04-10T00:00:00Z",
+      "actor": "system",
+      "actorName": "System",
+      "summary": "Peer feedback phase opened automatically per phase schedule."
+    },
+    {
+      "id": "evt-005",
+      "eventType": "reminder-sent",
+      "eventAt": "2026-04-20T08:00:00Z",
+      "actor": "user-spatel",
+      "actorName": "Sara Patel",
+      "summary": "Mid-cycle reminder sent to 32 participants who have not started self-assessment."
+    }
+  ],
+  "metadata": {
+    "tags": ["annual", "performance", "fy2026", "company-wide"],
+    "slack": "#fy2026-annual-review",
+    "primaryEmail": "people-ops@whoville.example.internal",
+    "calendarEvents": [
+      {
+        "name": "Self-Assessment Window Opens",
+        "startsAt": "2026-04-01T00:00:00Z"
+      },
+      {
+        "name": "Self-Assessment Deadline",
+        "startsAt": "2026-04-15T23:59:59Z"
+      },
+      {
+        "name": "Manager Review Window Opens",
+        "startsAt": "2026-05-01T00:00:00Z"
+      },
+      {
+        "name": "Cycle Closes",
+        "startsAt": "2026-05-31T23:59:59Z"
+      }
+    ]
+  },
+  "createdAt": "2026-03-15T10:00:00Z",
+  "updatedAt": "2026-04-25T10:00:00Z"
+}
