@@ -1,0 +1,178 @@
+{
+  "asOfDate": "2026-05-01",
+  "generatedAt": "2026-05-01T08:00:00Z",
+  "note": "Per-team headcount only includes the 8 named teams. Total includes additional employees across other smaller teams not enumerated here.",
+  "summary": {
+    "total": 247,
+    "active": 230,
+    "onLeave": 12,
+    "contractor": 5,
+    "terminated": 0,
+    "newThisMonth": 8,
+    "leftThisMonth": 3
+  },
+  "total": 247,
+  "byStatus": {
+    "active": 230,
+    "onLeave": 12,
+    "contractor": 5,
+    "terminated": 0
+  },
+  "byDepartment": [
+    {
+      "department": "Engineering",
+      "headcount": 132,
+      "active": 124,
+      "onLeave": 6,
+      "contractor": 2
+    },
+    {
+      "department": "Customer Success",
+      "headcount": 58,
+      "active": 54,
+      "onLeave": 3,
+      "contractor": 1
+    },
+    {
+      "department": "Operations",
+      "headcount": 38,
+      "active": 35,
+      "onLeave": 2,
+      "contractor": 1
+    },
+    {
+      "department": "Product",
+      "headcount": 19,
+      "active": 17,
+      "onLeave": 1,
+      "contractor": 1
+    }
+  ],
+  "byTeam": [
+    {
+      "teamId": "team-001",
+      "name": "Alpha Squad",
+      "department": "Engineering",
+      "headcount": 8,
+      "active": 7,
+      "onLeave": 1
+    },
+    {
+      "teamId": "team-002",
+      "name": "Beta Team",
+      "department": "Engineering",
+      "headcount": 12,
+      "active": 11,
+      "onLeave": 1
+    },
+    {
+      "teamId": "team-003",
+      "name": "Engineering Platform",
+      "department": "Engineering",
+      "headcount": 6,
+      "active": 6,
+      "onLeave": 0
+    },
+    {
+      "teamId": "team-004",
+      "name": "Site Reliability",
+      "department": "Engineering",
+      "headcount": 5,
+      "active": 5,
+      "onLeave": 0
+    },
+    {
+      "teamId": "team-005",
+      "name": "Customer Success",
+      "department": "Customer Success",
+      "headcount": 14,
+      "active": 13,
+      "onLeave": 1
+    },
+    {
+      "teamId": "team-006",
+      "name": "Product Analytics",
+      "department": "Product",
+      "headcount": 4,
+      "active": 4,
+      "onLeave": 0
+    },
+    {
+      "teamId": "team-007",
+      "name": "Operations Excellence",
+      "department": "Operations",
+      "headcount": 7,
+      "active": 7,
+      "onLeave": 0
+    },
+    {
+      "teamId": "team-008",
+      "name": "Gamma Group",
+      "department": "Operations",
+      "headcount": 0,
+      "active": 0,
+      "onLeave": 0
+    }
+  ],
+  "byLocation": {
+    "Office": 102,
+    "Remote": 118,
+    "Hybrid": 27
+  },
+  "trend": [
+    {
+      "month": "2025-12",
+      "total": 232,
+      "active": 219,
+      "onLeave": 8,
+      "contractor": 5,
+      "hires": 4,
+      "departures": 2
+    },
+    {
+      "month": "2026-01",
+      "total": 235,
+      "active": 220,
+      "onLeave": 10,
+      "contractor": 5,
+      "hires": 5,
+      "departures": 2
+    },
+    {
+      "month": "2026-02",
+      "total": 240,
+      "active": 226,
+      "onLeave": 9,
+      "contractor": 5,
+      "hires": 6,
+      "departures": 1
+    },
+    {
+      "month": "2026-03",
+      "total": 244,
+      "active": 230,
+      "onLeave": 9,
+      "contractor": 5,
+      "hires": 5,
+      "departures": 1
+    },
+    {
+      "month": "2026-04",
+      "total": 242,
+      "active": 228,
+      "onLeave": 9,
+      "contractor": 5,
+      "hires": 3,
+      "departures": 5
+    },
+    {
+      "month": "2026-05",
+      "total": 247,
+      "active": 230,
+      "onLeave": 12,
+      "contractor": 5,
+      "hires": 8,
+      "departures": 3
+    }
+  ]
+}
